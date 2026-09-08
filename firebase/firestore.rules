@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function admin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    match /projects/{id} { allow get, list: if resource.data.publicado == true || admin(); allow create, update, delete: if admin(); }
+    match /testimonials/{id} { allow get, list: if resource.data.publicado == true || admin(); allow create, update, delete: if admin(); }
+    match /technologies/{id} { allow get, list: if resource.data.publicado == true || admin(); allow create, update, delete: if admin(); }
+    match /profile/{id} { allow get: if true; allow create, update, delete: if admin(); }
+    match /settings/{id} { allow get: if true; allow create, update, delete: if admin(); }
+    match /quotes/{id} { allow read, write: if admin(); }
+    match /admins/{id} { allow get: if signedIn() && (request.auth.uid == id || admin()); allow list: if admin(); allow create, update, delete: if false; }
+  }
+}

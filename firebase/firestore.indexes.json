@@ -1,0 +1,7 @@
+{
+  "indexes":[
+    {"collectionGroup":"projects","queryScope":"COLLECTION","fields":[{"fieldPath":"publicado","order":"ASCENDING"},{"fieldPath":"ordem","order":"ASCENDING"}]},
+    {"collectionGroup":"testimonials","queryScope":"COLLECTION","fields":[{"fieldPath":"publicado","order":"ASCENDING"},{"fieldPath":"ordem","order":"ASCENDING"}]},
+    {"collectionGroup":"technologies","queryScope":"COLLECTION","fields":[{"fieldPath":"publicado","order":"ASCENDING"},{"fieldPath":"ordem","order":"ASCENDING"}]}
+  ],"fieldOverrides":[]
+}

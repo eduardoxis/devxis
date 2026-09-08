@@ -1,0 +1,2 @@
+import {text} from './sanitizer.js';
+export function quoteData(form){const data=Object.fromEntries(new FormData(form));Object.keys(data).forEach(key=>data[key]=text(data[key]));if(!data.nome||!/^\S+@\S+\.\S+$/.test(data.email)||!data.whatsapp||!data.tipoSistema||!data.faixaOrcamento||!data.descricao)throw new Error('Preencha todos os campos obrigatórios.');if(data.descricao.length>3000)throw new Error('A descrição está muito longa.');return data}
