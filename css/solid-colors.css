@@ -12,3 +12,37 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .price-card.featured{background:var(--violet);border-color:var(--violet);transform:translateY(-8px)}.quote-section{background:linear-gradient(120deg,#171431,#272151)}.quote-section form{box-shadow:0 20px 50px #09071c35}.global-loading{background:#1b163b88}
 @media(max-width:900px){.services-section .section-title,.projects-section .section-title{display:block}.results-section{display:block}.results-grid{margin-top:25px}}
 @media(max-width:680px){.hero{min-height:660px}.hero-orbit{opacity:1;right:auto}.hero-benefits{gap:10px;font-size:11px}.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.results-grid span{min-width:0;padding:13px 6px}}
+
+/* Sem degradês: roxo sólido como cor predominante do site. */
+.hero { background: #fff; }
+.hero-lines { box-shadow: none; }
+.code-window i { background: #a893ff; }
+.code-window i:nth-child(even) { background: #68e4cf; }
+.projects-section { background: var(--deep); }
+.projects-section::before { display: none; }
+.project-image,
+.project-card:nth-child(2) .project-image,
+.project-card:nth-child(3) .project-image,
+.project-image.no-image { background-image: none; background-color: var(--violet); }
+.quote-section { background: var(--deep); }
+
+/* Hero e menu no estilo editorial centralizado da nova referência. */
+.site-header { padding-inline: clamp(28px, 5vw, 72px); gap: 22px; }
+.site-header nav { margin-left: auto; margin-right: 0; gap: 25px; }
+.site-header nav a { font-family: var(--font-head); font-size: 13px; }
+.site-header .header-cta { border-radius: 999px; padding: 13px 20px; }
+.site-header .profile-area { display: none; }
+.hero { min-height: 590px; display: grid; place-items: center; padding: 110px 24px 92px; text-align: center; }
+.hero-content { max-width: 710px; }
+.hero .eyebrow { margin-bottom: 20px; }
+.hero h1 { max-width: 700px; font-size: clamp(42px, 5.3vw, 72px); }
+.hero-text { margin: 25px auto 0; max-width: 620px; font-size: 17px; }
+.hero .actions { justify-content: center; margin-top: 30px; }
+.hero .actions .button { min-width: 154px; border-radius: 999px; padding-block: 15px; }
+
+@media (max-width: 680px) {
+  .site-header .profile-area { display: none; }
+  .site-header nav { margin: 0; }
+  .hero { min-height: 520px; padding-block: 76px 64px; }
+  .hero h1 { font-size: clamp(38px, 11vw, 52px); }
+}
