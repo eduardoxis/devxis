@@ -40,6 +40,13 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .hero .actions { justify-content: center; margin-top: 30px; }
 .hero .actions .button { min-width: 154px; border-radius: 999px; padding-block: 15px; }
 
+/* Seção de posicionamento com o mesmo roxo sólido das áreas em destaque. */
+.trust { background: var(--deep); color: #fff; }
+.trust > .eyebrow { color: #a893ff; }
+.trust > p:not(.eyebrow) { color: #fff; }
+.trust-items { color: #ded9f0; }
+.trust-items span:before { color: #a893ff; }
+
 @media (max-width: 680px) {
   .site-header .profile-area { display: none; }
   .site-header nav { margin: 0; }
