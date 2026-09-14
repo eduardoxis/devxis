@@ -132,3 +132,44 @@
   .admin-summary-card b { font-size: 30px; }
   .admin-summary-card span { font-size: 16px; }
 }
+
+/* Ajuste visual: tipografia neutra e painel mais compacto. */
+.admin-modal-box,
+.admin-modal-box button,
+.admin-modal-box input,
+.admin-modal-box textarea,
+.admin-modal-box select {
+  font-family: Arial, sans-serif;
+}
+.admin-modal-box {
+  width: min(1240px, calc(100vw - 48px));
+  min-height: min(760px, calc(100vh - 48px));
+  max-height: calc(100vh - 48px);
+  padding: 34px 42px 42px;
+  border-radius: 18px;
+}
+.admin-modal-head { min-height: 105px; padding-bottom: 22px; }
+.admin-modal-head .eyebrow { margin-bottom: 12px; font-size: 13px; }
+.admin-modal-head h2 { font-family: Arial, sans-serif; font-size: clamp(32px, 3.3vw, 44px); font-weight: 800; letter-spacing: -.035em; }
+.admin-modal-head .button { min-width: 84px; min-height: 48px; border-radius: 11px; font-size: 16px; }
+.admin-tabs { gap: 8px; padding: 15px 0; }
+.admin-tabs button { padding: 11px 17px; border-radius: 10px; font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; }
+.admin-modal-content { padding-top: 28px; }
+.admin-summary { gap: 16px; }
+.admin-summary-card { min-height: 230px; padding: 27px; border-radius: 14px; }
+.admin-summary-card i { width: 54px; height: 54px; margin-bottom: 19px; font-size: 28px; }
+.admin-summary-card b { margin-bottom: 7px; color: #071832; font-family: Arial, sans-serif; font-size: 29px; font-weight: 800; letter-spacing: -.025em; }
+.admin-summary-card span { color: #5d6c84; font-size: 16px; }
+.admin-project-form { gap: 18px; padding: 24px; border-radius: 14px; }
+.admin-project-form h3 { font-family: Arial, sans-serif; font-size: 24px; }
+.admin-project-form label { font-size: 14px; }
+.admin-project-form button { min-height: 48px; font-size: 16px; }
+.admin-list table { font-size: 15px; }
+.admin-list th, .admin-list td { padding: 16px 10px; }
+.admin-list th { font-family: Arial, sans-serif; font-size: 15px; }
+
+@media (max-width: 760px) {
+  .admin-modal-box { width: calc(100vw - 20px); min-height: calc(100vh - 20px); max-height: calc(100vh - 20px); padding: 24px 18px; }
+  .admin-modal-head h2 { font-size: 31px; }
+  .admin-summary-card { min-height: 190px; }
+}
