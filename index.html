@@ -7,15 +7,19 @@
   <meta property="og:title" content="DEVXIS | Sites e sistemas sob medida">
   <title>DEVXIS | Sites e sistemas sob medida</title>
   <link rel="icon" href="assets/images/logo-devxis.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/admin-extra.css">
+  <link rel="stylesheet" href="css/solid-colors.css">
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="#inicio" aria-label="DEVXIS, início"><img src="assets/images/logo-devxis.png" alt="DEVXIS"><span>dev<span>xis</span></span></a>
     <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
-    <nav aria-label="Menu principal"><a href="#sobre">Sobre</a><a href="#servicos">Serviços</a><a href="#projetos">Projetos</a><a href="#precos">Preços</a></nav>
+    <nav aria-label="Menu principal"><a href="#inicio">Início</a><a href="#servicos">Serviços</a><a href="#servicos">Como funciona</a><a href="#depoimentos">Depoimentos</a></nav>
     <a class="button primary header-cta" href="#orcamento">Fazer orçamento <span>↗</span></a>
     <div class="profile-area"><button id="profile-menu" class="profile-button" aria-expanded="false" aria-label="Abrir perfil">●</button><div id="profile-dropdown" class="profile-dropdown" hidden><span id="profile-status">Área do cliente</span><button id="open-admin" type="button">Entrar</button><button id="admin-access" type="button" hidden>Abrir painel</button></div></div>
   </header>
@@ -23,34 +27,38 @@
   <main>
     <section id="inicio" class="hero">
       <div class="hero-content">
-        <p class="eyebrow">DESENVOLVIMENTO DIGITAL</p>
+        <p class="eyebrow">TRANSFORME SUA IDEIA EM REALIDADE</p>
         <h1>Seu próximo site começa com uma <em>boa ideia.</em></h1>
-        <p class="hero-text">Eu transformo ideias em sites e sistemas rápidos, bonitos e pensados para gerar resultados de verdade.</p>
-        <div class="actions"><a class="button primary" href="#orcamento">Fazer orçamento <span>↗</span></a><a class="button ghost" href="#projetos">Conhecer projetos</a></div>
+        <p class="hero-text">Soluções digitais modernas, rápidas e pensadas para o seu negócio crescer de verdade.</p>
+        <div class="actions"><a class="button primary" href="#orcamento">Quero meu site <span>→</span></a><a class="button ghost" href="#orcamento">Falar com especialista</a></div>
+        <div class="hero-benefits"><span>⚡ Entrega rápida</span><span>◉ Suporte dedicado</span><span>⌾ 100% personalizado</span></div>
       </div>
       <div class="hero-orbit" aria-hidden="true"><div class="orbit-card orbit-one">HTML</div><div class="orbit-card orbit-two">CSS</div><div class="orbit-card orbit-three">JS</div><div class="code-window"><i></i><i></i><i></i><i></i><i></i></div></div>
       <div class="hero-lines" aria-hidden="true"></div>
     </section>
 
     <section id="sobre" class="trust section-light">
-      <p>Projetos construídos para quem quer <strong>presença, clareza e resultado.</strong></p>
-      <div class="trust-items"><span>Sites rápidos</span><span>Design responsivo</span><span>Atendimento próximo</span><span>Entrega profissional</span></div>
+      <p class="eyebrow dark">— MAIS QUE SITES, SOLUÇÕES PARA O SEU CRESCIMENTO</p>
+      <p>Ajudamos negócios a se destacarem<br><strong>no mundo digital.</strong></p>
+      <div class="trust-items"><span>Design</span><span>Performance</span><span>Estratégia</span><span>Resultado</span></div>
     </section>
 
     <section id="servicos" class="section-light services-section">
-      <div class="section-title"><p class="eyebrow dark">O QUE POSSO CRIAR</p><h2>Do rascunho ao produto no ar.</h2><p>Uma solução adequada ao momento do seu negócio, sem complicar o que pode ser simples.</p></div>
+      <div class="section-title"><p class="eyebrow dark">COMO FUNCIONA</p><h2>Do seu sonho ao site no ar.</h2><p>Um processo simples, transparente e sem complicação.</p></div>
       <div class="service-grid">
-        <article class="service-card"><span class="card-number">01</span><h3>Sites que vendem</h3><p>Landing pages e sites institucionais com identidade, estratégia e velocidade.</p><span class="service-art browser-art">⌁</span><a href="#orcamento">Quero um site <b>→</b></a></article>
-        <article class="service-card"><span class="card-number">02</span><h3>Sistemas sob medida</h3><p>Painéis, áreas de cliente e ferramentas para simplificar sua operação.</p><span class="service-art dashboard-art">▦</span><a href="#orcamento">Quero um sistema <b>→</b></a></article>
-        <article class="service-card"><span class="card-number">03</span><h3>Manutenção e evolução</h3><p>Seu projeto acompanhado com melhorias, correções e novas funcionalidades.</p><span class="service-art pulse-art">⌘</span><a href="#orcamento">Vamos conversar <b>→</b></a></article>
+        <article class="service-card"><span class="card-number">01</span><span class="service-icon">◌</span><h3>Conversa e ideia</h3><p>Entendemos o seu negócio, objetivos e o que seu site precisa ter.</p><a href="#orcamento">Quero começar <b>→</b></a></article>
+        <article class="service-card"><span class="card-number">02</span><span class="service-icon">▱</span><h3>Desenvolvimento</h3><p>Transformamos sua ideia em um site moderno, rápido e funcional.</p><a href="#projetos">Acompanhar projeto <b>→</b></a></article>
+        <article class="service-card"><span class="card-number">03</span><span class="service-icon">⌁</span><h3>Site no ar</h3><p>Seu site pronto para atrair clientes e gerar resultados.</p><a href="#precos">Ver planos <b>→</b></a></article>
       </div>
     </section>
 
     <section id="projetos" class="projects-section">
-      <div class="section-title on-dark"><p class="eyebrow">PORTFÓLIO SELECIONADO</p><h2>Projetos que resolvem problemas reais.</h2><p>Uma seleção de experiências digitais criadas com propósito.</p></div>
+      <div class="section-title on-dark"><p class="eyebrow">— NOSSOS PROJETOS</p><h2>Projetos que geram resultados reais.</h2><p>Sites modernos, rápidos e feitos para o seu público.</p></div>
       <div id="projects-grid" class="project-grid" aria-live="polite"></div>
       <div id="projects-pagination" class="pagination" hidden><button id="projects-prev" class="pagination-button" type="button">← Anterior</button><span id="projects-page">Página 1</span><button id="projects-next" class="pagination-button" type="button">Próxima →</button></div>
     </section>
+
+    <section class="results-section section-light"><div><p class="eyebrow dark">— NÚMEROS QUE FAZEM A DIFERENÇA</p><h2>Boas ideias se transformam<br>em grandes resultados.</h2></div><div class="results-grid"><span><b>+200</b> projetos entregues</span><span><b>+150</b> clientes satisfeitos</span><span><b>99%</b> de aprovação</span></div></section>
 
     <section id="tecnologias" class="section-light tech-section"><div class="section-title"><p class="eyebrow dark">TECNOLOGIAS</p><h2>Boas ferramentas fazem parte do processo.</h2></div><div id="technologies-list" class="tech-list"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Firebase</span><span>APIs</span><span>Vercel</span></div></section>
 
