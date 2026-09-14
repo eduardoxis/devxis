@@ -80,3 +80,41 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .project-image.no-image { background-color: #087bff; }
 .results-grid b, .project-content button { color: #087bff; }
 .tech-list span { background: #eaf3ff; color: #087bff; }
+
+/* Composição centralizada em blocos, como no layout de referência. */
+.hero { min-height: 480px; }
+.section-light,
+.projects-section,
+.quote-section {
+  width: min(1180px, calc(100% - 80px));
+  margin-left: auto;
+  margin-right: auto;
+}
+.trust,
+.projects-section,
+.quote-section { margin-bottom: 46px; }
+.services-section,
+.results-section,
+.tech-section,
+.testimonials-section { padding-top: 58px; padding-bottom: 58px; }
+.pricing-section {
+  background: #f4f8ff;
+  padding-top: 58px;
+  padding-bottom: 58px;
+  margin-bottom: 46px;
+}
+.projects-section { padding-top: 70px; padding-bottom: 70px; }
+.quote-section { padding-top: 70px; padding-bottom: 70px; }
+footer { width: min(1180px, calc(100% - 80px)); margin: 0 auto; }
+
+@media (max-width: 680px) {
+  .section-light,
+  .projects-section,
+  .quote-section,
+  footer { width: calc(100% - 32px); }
+  .trust,
+  .projects-section,
+  .quote-section,
+  .pricing-section { margin-bottom: 24px; }
+  .hero { min-height: 440px; }
+}
