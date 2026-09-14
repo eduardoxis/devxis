@@ -8,7 +8,7 @@ const toast=message=>{const el=$('#toast');el.textContent=message;el.classList.a
 let pageCursor=null;let activeTab='overview';
 function close(){modal.hidden=true}function open(){modal.hidden=false}
 $('#profile-menu').onclick=()=>{$('#profile-dropdown').hidden=!$('#profile-dropdown').hidden};$('#open-admin').onclick=open;$('#footer-admin').onclick=open;$('#admin-access').onclick=open;$('#close-admin').onclick=close;modal.onclick=e=>{if(e.target===modal)close()};
-async function isAdmin(user){if(!user||!firebaseReady)return false;const record=await getDoc(doc(db,'admins',user.uid));return record.exists()&&record.data().ativo!==false}
+async function isAdmin(user){if(!user||!firebaseReady)return false;const record=await getDoc(doc(db,'users',user.uid));return record.exists()&&record.data().isAdmin===true}
 function setTab(tab){activeTab=tab;document.querySelectorAll('[data-admin-tab]').forEach(button=>button.classList.toggle('active',button.dataset.adminTab===tab));renderTab().catch(()=>toast('Não foi possível carregar esta área.'))}
 document.querySelectorAll('[data-admin-tab]').forEach(button=>button.onclick=()=>setTab(button.dataset.adminTab));
 function table(items,headers,rows){const wrap=document.createElement('div');wrap.className='admin-list';const element=document.createElement('table');const head=document.createElement('thead');head.innerHTML=`<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;const body=document.createElement('tbody');items.forEach(item=>{const tr=document.createElement('tr');rows(item).forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.append(td)});body.append(tr)});element.append(head,body);wrap.append(element);return wrap}
