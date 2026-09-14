@@ -13,7 +13,11 @@ export function hideLoading(){
   if(active===0&&overlay)overlay.hidden=true;
 }
 
-export async function withLoading(task,label){
+export async function withLoading(task, label) {
   showLoading(label);
-  try{return await task()}finally{hideLoading()}
+  try {
+    return await task();
+  } finally {
+    hideLoading();
+  }
 }
