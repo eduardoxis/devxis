@@ -57,7 +57,7 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 /* Paleta azul sólida da referência mais recente. */
 :root {
   --ink: #071832;
-  --deep: #071b3b;
+  --deep: #003f70;
   --violet: #087bff;
   --purple: #087bff;
   --soft: #f3f7ff;
@@ -71,7 +71,7 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .card-number { color: #d7e8ff; }
 .service-card:nth-child(2) .card-number { color: #a9d0ff; }
 .service-icon { color: #087bff; }
-.projects-section, .quote-section, .trust { background: #071b3b; }
+.projects-section, .quote-section, .trust { background: #003f70; }
 .trust > .eyebrow, .trust-items span:before { color: #58a8ff; }
 .trust-items { color: #d4e6ff; }
 .project-image,
