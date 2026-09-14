@@ -53,3 +53,30 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
   .hero { min-height: 520px; padding-block: 76px 64px; }
   .hero h1 { font-size: clamp(38px, 11vw, 52px); }
 }
+
+/* Paleta azul sólida da referência mais recente. */
+:root {
+  --ink: #071832;
+  --deep: #071b3b;
+  --violet: #087bff;
+  --purple: #087bff;
+  --soft: #f3f7ff;
+  --muted: #60708d;
+  --line: #dfe9f8;
+}
+.eyebrow, .eyebrow.dark { color: #087bff; }
+.hero h1 em { color: #087bff; }
+.service-card { border-color: #e1ebfa; }
+.service-card:nth-child(2), .price-card.featured { background: #087bff; box-shadow: 0 16px 30px #087bff35; }
+.card-number { color: #d7e8ff; }
+.service-card:nth-child(2) .card-number { color: #a9d0ff; }
+.service-icon { color: #087bff; }
+.projects-section, .quote-section, .trust { background: #071b3b; }
+.trust > .eyebrow, .trust-items span:before { color: #58a8ff; }
+.trust-items { color: #d4e6ff; }
+.project-image,
+.project-card:nth-child(2) .project-image,
+.project-card:nth-child(3) .project-image,
+.project-image.no-image { background-color: #087bff; }
+.results-grid b, .project-content button { color: #087bff; }
+.tech-list span { background: #eaf3ff; color: #087bff; }
