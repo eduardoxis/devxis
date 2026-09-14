@@ -4,11 +4,12 @@ import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.14.1/firebas
 
 // Cole aqui os dados do seu aplicativo Web, obtidos no Console do Firebase.
 const firebaseConfig = {
-  apiKey: 'YOUR_FIREBASE_API_KEY',
-  authDomain: 'YOUR_FIREBASE_AUTH_DOMAIN',
-  projectId: 'YOUR_FIREBASE_PROJECT_ID',
-  messagingSenderId: 'YOUR_FIREBASE_MESSAGING_SENDER_ID',
-  appId: 'YOUR_FIREBASE_APP_ID',
+  apiKey: "AIzaSyCJ4itSfOYwPyIkbiQVEGoeL1yFTJXdpOU",
+  authDomain: "devxis-91948.firebaseapp.com",
+  projectId: "devxis-91948",
+  storageBucket: "devxis-91948.firebasestorage.app",
+  messagingSenderId: "48502567432",
+  appId: "1:48502567432:web:809508fc8a37e352d097bd"
 };
 
 const hasPlaceholder = Object.values(firebaseConfig).some((value) =>
