@@ -157,3 +157,45 @@ footer {
     min-height: calc(100svh - 68px);
   }
 }
+
+/* Ritmo visual: seções claras alternadas com faixas azuis sólidas. */
+.hero,
+.services-section,
+.results-section,
+.pricing-section,
+.testimonials-section {
+  background: #fff;
+}
+.trust,
+.projects-section,
+.tech-section,
+.quote-section {
+  background: #003f70;
+}
+
+/* As áreas azuis nunca deixam bordas brancas nas laterais. */
+.tech-section {
+  width: 100%;
+  margin: 0;
+  padding-left: max(40px, calc((100vw - 1100px) / 2));
+  padding-right: max(40px, calc((100vw - 1100px) / 2));
+}
+.tech-section .section-title h2,
+.tech-section .section-title p {
+  color: #fff;
+}
+.tech-section .section-title .eyebrow {
+  color: #58a8ff;
+}
+.tech-list span {
+  background: #fff;
+  color: #003f70;
+}
+
+@media (max-width: 680px) {
+  .tech-section {
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
