@@ -103,35 +103,47 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .services-section,
 .results-section,
 .tech-section,
-.testimonials-section { padding-top: 58px; padding-bottom: 58px; }
+.testimonials-section { padding-top: 92px; padding-bottom: 92px; }
 .pricing-section {
   background: #f4f8ff;
-  padding-top: 58px;
-  padding-bottom: 58px;
+  padding-top: 92px;
+  padding-bottom: 92px;
 }
 .projects-section {
-  padding-top: 70px;
-  padding-bottom: 70px;
+  padding-top: 105px;
+  padding-bottom: 105px;
   padding-left: max(40px, calc((100vw - 1100px) / 2));
   padding-right: max(40px, calc((100vw - 1100px) / 2));
 }
 .quote-section {
-  padding-top: 70px;
-  padding-bottom: 70px;
+  padding-top: 105px;
+  padding-bottom: 105px;
   padding-left: max(40px, calc((100vw - 1060px) / 2));
   padding-right: max(40px, calc((100vw - 1060px) / 2));
 }
-footer { width: min(1180px, calc(100% - 80px)); margin: 0 auto; }
+footer {
+  width: 100%;
+  margin: 0;
+  padding: 70px max(40px, calc((100vw - 1100px) / 2)) 42px;
+  background: #003f70;
+}
 
 @media (max-width: 680px) {
-  .section-light,
-  footer { width: calc(100% - 32px); }
+  .section-light { width: calc(100% - 32px); }
   .trust,
   .projects-section,
   .quote-section,
   .pricing-section { margin-bottom: 0; }
   .projects-section,
   .quote-section { padding-left: 24px; padding-right: 24px; }
+  .services-section,
+  .results-section,
+  .tech-section,
+  .testimonials-section,
+  .pricing-section { padding-top: 68px; padding-bottom: 68px; }
+  .projects-section,
+  .quote-section { padding-top: 76px; padding-bottom: 76px; }
+  footer { padding: 52px 24px 32px; }
   .hero { min-height: 440px; }
 }
 
