@@ -139,7 +139,7 @@
 .admin-modal-box input,
 .admin-modal-box textarea,
 .admin-modal-box select {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-body);
 }
 .admin-modal-box {
   width: min(1240px, calc(100vw - 48px));
@@ -176,10 +176,10 @@
 
 /* Estrutura do painel inspirada no layout de referência. */
 .admin-modal-box {
-  width: min(1360px, calc(100vw - 56px));
-  min-height: min(860px, calc(100vh - 36px));
-  max-height: calc(100vh - 36px);
-  padding: 28px 34px 34px;
+  width: min(1180px, calc(100vw - 64px));
+  min-height: min(720px, calc(100vh - 56px));
+  max-height: calc(100vh - 56px);
+  padding: 24px 28px 28px;
   border-radius: 22px;
 }
 .admin-modal-box .modal-close {
@@ -198,8 +198,8 @@
 }
 .admin-modal-head { min-height: 102px; padding: 0 0 17px; }
 .admin-modal-head .eyebrow { margin-bottom: 10px; color: #087bff; font-size: 14px; }
-.admin-modal-head h2 { margin: 0; font-size: clamp(32px, 3vw, 42px); }
-.admin-subtitle { margin: 8px 0 0; color: #526787; font-size: 15px; }
+.admin-modal-head h2 { margin: 0; font-family: var(--font-head); font-size: clamp(29px, 2.6vw, 36px); }
+.admin-subtitle { margin: 7px 0 0; color: #526787; font-size: 13px; }
 .admin-tabs {
   min-height: 54px;
   display: flex;
@@ -215,7 +215,7 @@
   padding: 10px 15px;
   color: #3e5273;
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 14px;
 }
 .admin-tabs button span { color: #071832; font-size: 19px; }
 .admin-tabs button.active { color: #064eea; background: #dce8ff; }
@@ -226,7 +226,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 18px 24px;
   margin: 0 0 16px;
-  padding: 26px 28px 24px;
+  padding: 22px 24px 20px;
   border: 1px solid #dce8f8;
   border-radius: 20px;
   background: #fff;
@@ -239,11 +239,11 @@
 .admin-project-form button { grid-column: 1 / -1; }
 .admin-form-heading { display: grid; grid-template-columns: auto 1fr minmax(270px, .8fr); gap: 16px; align-items: center; }
 .admin-form-symbol { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 13px; background: #0c71fa; box-shadow: 0 8px 15px #087bff40; color: #fff; font-size: 33px; }
-.admin-form-heading h3 { margin: 0; font-size: 25px; }
-.admin-form-heading p { margin: 5px 0 0; color: #5c7090; font-size: 14px; }
+.admin-form-heading h3 { margin: 0; font-family: var(--font-head); font-size: 22px; }
+.admin-form-heading p { margin: 5px 0 0; color: #5c7090; font-size: 13px; }
 .admin-tip { display: flex; flex-direction: column; gap: 4px; padding: 13px 17px; border-radius: 12px; background: #edf5ff; color: #48628b; font-size: 12px; }
 .admin-tip b { color: #087bff; font-size: 14px; }
-.admin-project-form label { color: #071832; font-size: 14px; font-weight: 700; }
+.admin-project-form label { color: #071832; font-size: 13px; font-weight: 700; }
 .admin-project-form label > span:first-child { display: block; margin-bottom: 8px; }
 .admin-project-form input,
 .admin-project-form select,
@@ -263,9 +263,9 @@
 .admin-publish-field input:checked { background: #087bff; }
 .admin-publish-field input::after { content: ''; display: block; width: 20px; height: 20px; margin: 3px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
 .admin-publish-field input:checked::after { transform: translateX(20px); }
-.admin-project-form button { min-height: 50px; border-radius: 11px; font-size: 16px; }
+.admin-project-form button { min-height: 46px; border-radius: 11px; font-size: 14px; }
 .admin-list { overflow: hidden; margin-top: 14px; border: 1px solid #dce8f8; border-radius: 18px; background: #fff; }
-.admin-project-form + .admin-list::before { content: '▰  Projetos cadastrados'; display: block; padding: 18px; border-bottom: 1px solid #dce8f8; color: #071832; font-size: 18px; font-weight: 800; }
+.admin-project-form + .admin-list::before { content: '▰  Projetos cadastrados'; display: block; padding: 15px 18px; border-bottom: 1px solid #dce8f8; color: #071832; font-size: 16px; font-weight: 800; }
 .admin-list table { margin: 0; }
 .admin-list th { background: #f5f9ff; font-size: 14px; }
 .admin-list th, .admin-list td { padding: 14px 18px; }
