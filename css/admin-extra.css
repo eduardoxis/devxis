@@ -268,7 +268,7 @@
 .admin-publish-field input:checked::after { transform: translateX(18px); }
 .admin-project-form button { min-height: 40px; border-radius: 9px; font-size: 12px; }
 .admin-list { overflow: hidden; margin-top: 14px; border: 1px solid #dce8f8; border-radius: 18px; background: #fff; }
-.admin-project-form + .admin-list::before { content: '▰  Projetos cadastrados'; display: block; padding: 15px 18px; border-bottom: 1px solid #dce8f8; color: #071832; font-size: 16px; font-weight: 800; }
+.admin-project-form + .admin-list::before { content: 'Projetos cadastrados'; display: block; padding: 15px 18px; border-bottom: 1px solid #dce8f8; color: #071832; font-size: 16px; font-weight: 800; }
 .admin-list table { margin: 0; }
 .admin-list th { background: #f5f9ff; font-size: 14px; }
 .admin-list th, .admin-list td { padding: 11px 14px; font-size: 12px; }
@@ -283,3 +283,43 @@
   .admin-tabs { padding-inline: 0; overflow-x: auto; }
   .admin-tabs #admin-logout { margin-left: 4px; }
 }
+
+/* Ícones SVG: nenhum emoji é usado no painel. */
+.admin-modal-box .admin-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+}
+.admin-modal-box .modal-close .admin-icon { width: 22px; height: 22px; }
+.admin-form-symbol .admin-icon { width: 23px; height: 23px; }
+.admin-project-form label > span .admin-icon,
+.admin-project-form em .admin-icon,
+.admin-publish-field b .admin-icon { width: 15px; height: 15px; margin-right: 5px; color: #087bff; }
+.admin-tip b { display: inline-flex; align-items: center; gap: 5px; }
+.admin-tip b .admin-icon { width: 16px; height: 16px; }
+.admin-summary-card i { display: grid; place-items: center; }
+.admin-summary-card i .admin-icon { width: 33px; height: 33px; }
+.admin-summary-card button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #087bff;
+  font: 700 14px/1 var(--font-body);
+  cursor: pointer;
+}
+.admin-summary-card button .admin-icon { width: 16px; height: 16px; }
+.admin-summary-card:nth-child(2) button { color: #6d35ef; }
+.admin-summary-card:nth-child(3) button { color: #ef2774; }
+.admin-page-tools button { display: inline-flex; align-items: center; gap: 7px; }
+.admin-page-tools button .admin-icon { width: 15px; height: 15px; }
