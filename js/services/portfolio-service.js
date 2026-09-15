@@ -10,11 +10,6 @@ import {
 const CACHE_PREFIX = 'devxis-public-v2:';
 const CACHE_MS = 10 * 60 * 1000;
 let publicProjects = null;
-const samples = [
-  { nome: 'Portal para consultoria', descricaoCurta: 'Site institucional com páginas estratégicas e captação de novos contatos.', categoria: 'Website' },
-  { nome: 'Sistema de orçamentos', descricaoCurta: 'Painel para criar, enviar e acompanhar propostas em um só lugar.', categoria: 'Sistema web' },
-  { nome: 'Área do cliente', descricaoCurta: 'Uma experiência simples para solicitações, documentos e acompanhamento.', categoria: 'Plataforma' },
-];
 function readCache(key) {
   try {
     const data = JSON.parse(sessionStorage.getItem(CACHE_PREFIX + key));
@@ -33,7 +28,7 @@ function mapDocs(snapshot) {
 }
 
 export async function getProjectsPage(cursor = 0, pageSize = 6) {
-  if (!firebaseReady) return { items: samples, cursor: null, hasMore: false };
+  if (!firebaseReady) return { items: [], cursor: null, hasMore: false };
 
   try {
     if (!publicProjects) {
@@ -49,8 +44,8 @@ export async function getProjectsPage(cursor = 0, pageSize = 6) {
     const hasMore = nextOffset < publicProjects.length;
     return { items, cursor: hasMore ? nextOffset : null, hasMore };
   } catch (error) {
-    console.warn('Projetos públicos indisponíveis; usando conteúdo inicial.', error.code || error);
-    return { items: cursor ? [] : samples, cursor: null, hasMore: false };
+    console.warn('Projetos públicos indisponíveis.', error.code || error);
+    return { items: [], cursor: null, hasMore: false };
   }
 }
 
