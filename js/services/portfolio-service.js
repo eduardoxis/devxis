@@ -35,23 +35,36 @@ function mapDocs(snapshot) {
 
 export async function getProjectsPage(cursor = null, pageSize = 6) {
   if (!firebaseReady) return { items: samples, cursor: null, hasMore: false };
-  const constraints = [where('publicado', '==', true), orderBy('ordem', 'asc'), limit(pageSize + 1)];
-  if (cursor) constraints.splice(2, 0, startAfter(cursor));
-  const snapshot = await getDocs(query(collection(db, 'projects'), ...constraints));
-  const docs = snapshot.docs;
-  const hasMore = docs.length > pageSize;
-  const visible = docs.slice(0, pageSize);
-  return { items: visible.map((doc) => ({ id: doc.id, ...doc.data() })), cursor: visible.at(-1) || null, hasMore };
+
+  try {
+    const constraints = [where('publicado', '==', true), orderBy('ordem', 'asc'), limit(pageSize + 1)];
+    if (cursor) constraints.splice(2, 0, startAfter(cursor));
+
+    const snapshot = await getDocs(query(collection(db, 'projects'), ...constraints));
+    const docs = snapshot.docs;
+    const hasMore = docs.length > pageSize;
+    const visible = docs.slice(0, pageSize);
+    return { items: visible.map((doc) => ({ id: doc.id, ...doc.data() })), cursor: visible.at(-1) || null, hasMore };
+  } catch (error) {
+    console.warn('Projetos públicos indisponíveis; usando conteúdo inicial.', error.code || error);
+    return { items: cursor ? [] : samples, cursor: null, hasMore: false };
+  }
 }
 
 export async function getPublished(name, fallback = []) {
   const cached = readCache(name);
   if (cached) return cached;
   if (!firebaseReady) return fallback;
-  const snapshot = await getDocs(query(collection(db, name), where('publicado', '==', true), orderBy('ordem', 'asc'), limit(12)));
-  const items = mapDocs(snapshot);
-  saveCache(name, items);
-  return items;
+
+  try {
+    const snapshot = await getDocs(query(collection(db, name), where('publicado', '==', true), orderBy('ordem', 'asc'), limit(12)));
+    const items = mapDocs(snapshot);
+    saveCache(name, items);
+    return items;
+  } catch (error) {
+    console.warn(`Conteúdo público "${name}" indisponível; usando conteúdo inicial.`, error.code || error);
+    return fallback;
+  }
 }
 export const getTestimonials = () => getPublished('testimonials', [{ nome: 'Cliente DEVXIS', empresa: 'Empresa parceira', texto: 'Atendimento profissional, cuidadoso e solução muito bem executada.', avaliacao: 5 }]);
 export const getTechnologies = () => getPublished('technologies', []);
