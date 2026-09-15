@@ -134,3 +134,14 @@ footer { width: min(1180px, calc(100% - 80px)); margin: 0 auto; }
   .quote-section { padding-left: 24px; padding-right: 24px; }
   .hero { min-height: 440px; }
 }
+
+/* A primeira seção ocupa toda a altura disponível ao abrir o site. */
+.hero {
+  min-height: calc(100svh - 76px);
+}
+
+@media (max-width: 680px) {
+  .hero {
+    min-height: calc(100svh - 68px);
+  }
+}
