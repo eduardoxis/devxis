@@ -163,13 +163,13 @@ footer {
 .services-section,
 .results-section,
 .pricing-section,
-.testimonials-section {
+.quote-section {
   background: #fff;
 }
 .trust,
 .projects-section,
 .tech-section,
-.quote-section {
+.testimonials-section {
   background: #003f70;
 }
 
@@ -179,6 +179,31 @@ footer {
   margin: 0;
   padding-left: max(40px, calc((100vw - 1100px) / 2));
   padding-right: max(40px, calc((100vw - 1100px) / 2));
+}
+.testimonials-section {
+  width: 100%;
+  margin: 0;
+  padding-left: max(40px, calc((100vw - 1100px) / 2));
+  padding-right: max(40px, calc((100vw - 1100px) / 2));
+}
+.testimonials-section .section-title h2 {
+  color: #fff;
+}
+.testimonials-section .section-title .eyebrow {
+  color: #58a8ff;
+}
+.testimonials-section .testimonial {
+  border-color: #d8e7f8;
+}
+.quote-section { color: #071832; }
+.quote-section .eyebrow { color: #087bff; }
+.quote-section .quote-copy h2 { color: #071832; }
+.quote-section .quote-copy > p:not(.eyebrow) { color: #60708d; }
+.quote-section .quote-copy small { color: #60708d; }
+.quote-section form {
+  border: 1px solid #dce6f5;
+  background: #f7faff;
+  box-shadow: none;
 }
 .tech-section .section-title h2,
 .tech-section .section-title p {
@@ -194,6 +219,11 @@ footer {
 
 @media (max-width: 680px) {
   .tech-section {
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .testimonials-section {
     width: 100%;
     padding-left: 24px;
     padding-right: 24px;
