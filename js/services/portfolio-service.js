@@ -5,6 +5,7 @@ import {
   query,
   where,
   limit,
+  onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const CACHE_PREFIX = 'devxis-public-v2:';
@@ -26,6 +27,12 @@ function saveCache(key, value) {
 function mapDocs(snapshot) {
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
+function byNewest(first, second) {
+  return (second.ordem || 0) - (first.ordem || 0);
+}
+function publicQuery(name, maxItems) {
+  return query(collection(db, name), where('publicado', '==', true), limit(maxItems));
+}
 
 export async function getProjectsPage(cursor = 0, pageSize = 6) {
   if (!firebaseReady) return { items: [], cursor: null, hasMore: false };
@@ -33,9 +40,9 @@ export async function getProjectsPage(cursor = 0, pageSize = 6) {
   try {
     if (!publicProjects) {
       const snapshot = await getDocs(
-        query(collection(db, 'projects'), where('publicado', '==', true), limit(30)),
+        publicQuery('projects', 30),
       );
-      publicProjects = mapDocs(snapshot).sort((first, second) => (second.ordem || 0) - (first.ordem || 0));
+      publicProjects = mapDocs(snapshot).sort(byNewest);
     }
 
     const offset = Number(cursor) || 0;
@@ -55,7 +62,7 @@ export async function getPublished(name, fallback = []) {
   if (!firebaseReady) return fallback;
 
   try {
-    const snapshot = await getDocs(query(collection(db, name), where('publicado', '==', true), limit(12)));
+    const snapshot = await getDocs(publicQuery(name, 12));
     const items = mapDocs(snapshot).sort((first, second) => (first.ordem || 0) - (second.ordem || 0));
     saveCache(name, items);
     return items;
@@ -63,6 +70,38 @@ export async function getPublished(name, fallback = []) {
     console.warn(`Conteúdo público "${name}" indisponível; usando conteúdo inicial.`, error.code || error);
     return fallback;
   }
+}
+
+export function watchProjects(onChange) {
+  if (!firebaseReady) {
+    onChange([]);
+    return () => {};
+  }
+
+  return onSnapshot(
+    publicQuery('projects', 30),
+    (snapshot) => {
+      publicProjects = mapDocs(snapshot).sort(byNewest);
+      onChange(publicProjects);
+    },
+    (error) => console.warn('Atualização de projetos indisponível.', error.code || error),
+  );
+}
+
+export function watchPublished(name, fallback, onChange) {
+  if (!firebaseReady) {
+    onChange(fallback);
+    return () => {};
+  }
+
+  return onSnapshot(
+    publicQuery(name, 12),
+    (snapshot) => onChange(mapDocs(snapshot).sort(byNewest)),
+    (error) => {
+      console.warn(`Atualização de "${name}" indisponível.`, error.code || error);
+      onChange(fallback);
+    },
+  );
 }
 export const getTestimonials = () => getPublished('testimonials', [{ nome: 'Cliente DEVXIS', empresa: 'Empresa parceira', texto: 'Atendimento profissional, cuidadoso e solução muito bem executada.', avaliacao: 5 }]);
 export const getTechnologies = () => getPublished('technologies', []);

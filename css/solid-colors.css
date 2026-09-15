@@ -229,3 +229,19 @@ footer {
     padding-right: 24px;
   }
 }
+
+/* Animações leves para carregar e percorrer o site. */
+.hero-content { animation: hero-arrival .7s ease-out both; }
+.reveal-section { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+.reveal-section.is-visible { opacity: 1; transform: translateY(0); }
+.content-enter { animation: card-arrival .5s ease-out var(--enter-delay, 0ms) both; }
+.project-card, .service-card, .price-card, .testimonial, .button { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+.project-card:hover, .service-card:hover, .price-card:hover, .testimonial:hover { transform: translateY(-7px); box-shadow: 0 18px 34px #001b3920; }
+.tech-list span { transition: transform .2s ease, background-color .2s ease; }
+.tech-list span:hover { transform: translateY(-3px) scale(1.03); }
+@keyframes hero-arrival { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes card-arrival { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .reveal-section { opacity: 1; transform: none; }
+}
