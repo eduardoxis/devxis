@@ -4,13 +4,12 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   limit,
-  startAfter,
 } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const CACHE_PREFIX = 'devxis-public-v2:';
 const CACHE_MS = 10 * 60 * 1000;
+let publicProjects = null;
 const samples = [
   { nome: 'Portal para consultoria', descricaoCurta: 'Site institucional com páginas estratégicas e captação de novos contatos.', categoria: 'Website' },
   { nome: 'Sistema de orçamentos', descricaoCurta: 'Painel para criar, enviar e acompanhar propostas em um só lugar.', categoria: 'Sistema web' },
@@ -33,18 +32,22 @@ function mapDocs(snapshot) {
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
-export async function getProjectsPage(cursor = null, pageSize = 6) {
+export async function getProjectsPage(cursor = 0, pageSize = 6) {
   if (!firebaseReady) return { items: samples, cursor: null, hasMore: false };
 
   try {
-    const constraints = [where('publicado', '==', true), orderBy('ordem', 'asc'), limit(pageSize + 1)];
-    if (cursor) constraints.splice(2, 0, startAfter(cursor));
+    if (!publicProjects) {
+      const snapshot = await getDocs(
+        query(collection(db, 'projects'), where('publicado', '==', true), limit(30)),
+      );
+      publicProjects = mapDocs(snapshot).sort((first, second) => (second.ordem || 0) - (first.ordem || 0));
+    }
 
-    const snapshot = await getDocs(query(collection(db, 'projects'), ...constraints));
-    const docs = snapshot.docs;
-    const hasMore = docs.length > pageSize;
-    const visible = docs.slice(0, pageSize);
-    return { items: visible.map((doc) => ({ id: doc.id, ...doc.data() })), cursor: visible.at(-1) || null, hasMore };
+    const offset = Number(cursor) || 0;
+    const items = publicProjects.slice(offset, offset + pageSize);
+    const nextOffset = offset + pageSize;
+    const hasMore = nextOffset < publicProjects.length;
+    return { items, cursor: hasMore ? nextOffset : null, hasMore };
   } catch (error) {
     console.warn('Projetos públicos indisponíveis; usando conteúdo inicial.', error.code || error);
     return { items: cursor ? [] : samples, cursor: null, hasMore: false };
@@ -57,8 +60,8 @@ export async function getPublished(name, fallback = []) {
   if (!firebaseReady) return fallback;
 
   try {
-    const snapshot = await getDocs(query(collection(db, name), where('publicado', '==', true), orderBy('ordem', 'asc'), limit(12)));
-    const items = mapDocs(snapshot);
+    const snapshot = await getDocs(query(collection(db, name), where('publicado', '==', true), limit(12)));
+    const items = mapDocs(snapshot).sort((first, second) => (first.ordem || 0) - (second.ordem || 0));
     saveCache(name, items);
     return items;
   } catch (error) {
