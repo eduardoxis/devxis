@@ -173,3 +173,110 @@
   .admin-modal-head h2 { font-size: 31px; }
   .admin-summary-card { min-height: 190px; }
 }
+
+/* Estrutura do painel inspirada no layout de referência. */
+.admin-modal-box {
+  width: min(1360px, calc(100vw - 56px));
+  min-height: min(860px, calc(100vh - 36px));
+  max-height: calc(100vh - 36px);
+  padding: 28px 34px 34px;
+  border-radius: 22px;
+}
+.admin-modal-box .modal-close {
+  top: 18px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d8e5f8;
+  border-radius: 12px;
+  color: #071832;
+  background: #fff;
+  font-size: 28px;
+  line-height: 1;
+}
+.admin-modal-head { min-height: 102px; padding: 0 0 17px; }
+.admin-modal-head .eyebrow { margin-bottom: 10px; color: #087bff; font-size: 14px; }
+.admin-modal-head h2 { margin: 0; font-size: clamp(32px, 3vw, 42px); }
+.admin-subtitle { margin: 8px 0 0; color: #526787; font-size: 15px; }
+.admin-tabs {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-bottom: 1px solid #deebfa;
+}
+.admin-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 15px;
+  color: #3e5273;
+  border-radius: 999px;
+  font-size: 15px;
+}
+.admin-tabs button span { color: #071832; font-size: 19px; }
+.admin-tabs button.active { color: #064eea; background: #dce8ff; }
+.admin-tabs button.active span { color: #087bff; }
+.admin-tabs #admin-logout { margin-left: auto; min-height: 40px; padding: 8px 17px; border-color: #d4e2f5; color: #071832; }
+.admin-modal-content { padding-top: 16px; }
+.admin-project-form {
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin: 0 0 16px;
+  padding: 26px 28px 24px;
+  border: 1px solid #dce8f8;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 24px #063d7a0b;
+}
+.admin-form-heading,
+.admin-project-form label:nth-of-type(3),
+.admin-project-form .admin-image-field,
+.admin-project-form .admin-publish-field,
+.admin-project-form button { grid-column: 1 / -1; }
+.admin-form-heading { display: grid; grid-template-columns: auto 1fr minmax(270px, .8fr); gap: 16px; align-items: center; }
+.admin-form-symbol { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 13px; background: #0c71fa; box-shadow: 0 8px 15px #087bff40; color: #fff; font-size: 33px; }
+.admin-form-heading h3 { margin: 0; font-size: 25px; }
+.admin-form-heading p { margin: 5px 0 0; color: #5c7090; font-size: 14px; }
+.admin-tip { display: flex; flex-direction: column; gap: 4px; padding: 13px 17px; border-radius: 12px; background: #edf5ff; color: #48628b; font-size: 12px; }
+.admin-tip b { color: #087bff; font-size: 14px; }
+.admin-project-form label { color: #071832; font-size: 14px; font-weight: 700; }
+.admin-project-form label > span:first-child { display: block; margin-bottom: 8px; }
+.admin-project-form input,
+.admin-project-form select,
+.admin-project-form textarea { margin-top: 0; border-color: #ccdcf3; border-radius: 10px; background: #fff; color: #17345e; }
+.admin-project-form input::placeholder,
+.admin-project-form textarea::placeholder { color: #8b9bb5; }
+.admin-project-form textarea { min-height: 86px; }
+.admin-image-field { position: relative; min-height: 76px; padding: 0; }
+.admin-image-field > span { margin-bottom: 8px !important; }
+.admin-image-field small { color: #627699; font-weight: 400; }
+.admin-image-field input { width: 100%; min-height: 54px; padding: 12px; border-style: dashed; cursor: pointer; }
+.admin-image-field em { display: block; margin-top: 6px; color: #536c93; font-size: 13px; font-style: normal; font-weight: 500; }
+.admin-publish-field { display: flex; align-items: center; justify-content: space-between; }
+.admin-publish-field > span { margin: 0 !important; }
+.admin-publish-field small { display: block; margin-top: 4px; color: #607495; font-size: 13px; font-weight: 400; }
+.admin-publish-field input { width: 46px; height: 26px; margin: 0; appearance: none; border: 0; border-radius: 99px; background: #aabbd3; cursor: pointer; }
+.admin-publish-field input:checked { background: #087bff; }
+.admin-publish-field input::after { content: ''; display: block; width: 20px; height: 20px; margin: 3px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
+.admin-publish-field input:checked::after { transform: translateX(20px); }
+.admin-project-form button { min-height: 50px; border-radius: 11px; font-size: 16px; }
+.admin-list { overflow: hidden; margin-top: 14px; border: 1px solid #dce8f8; border-radius: 18px; background: #fff; }
+.admin-project-form + .admin-list::before { content: '▰  Projetos cadastrados'; display: block; padding: 18px; border-bottom: 1px solid #dce8f8; color: #071832; font-size: 18px; font-weight: 800; }
+.admin-list table { margin: 0; }
+.admin-list th { background: #f5f9ff; font-size: 14px; }
+.admin-list th, .admin-list td { padding: 14px 18px; }
+.admin-page-tools { margin-top: 12px; }
+
+@media (max-width: 760px) {
+  .admin-modal-box { width: calc(100vw - 16px); min-height: calc(100vh - 16px); max-height: calc(100vh - 16px); padding: 20px 16px; }
+  .admin-form-heading { grid-template-columns: auto 1fr; }
+  .admin-tip { grid-column: 1 / -1; }
+  .admin-project-form { grid-template-columns: 1fr; padding: 20px; }
+  .admin-project-form label { grid-column: 1 / -1; }
+  .admin-tabs { padding-inline: 0; overflow-x: auto; }
+  .admin-tabs #admin-logout { margin-left: 4px; }
+}
