@@ -323,3 +323,28 @@
 .admin-summary-card:nth-child(3) button { color: #ef2774; }
 .admin-page-tools button { display: inline-flex; align-items: center; gap: 7px; }
 .admin-page-tools button .admin-icon { width: 15px; height: 15px; }
+
+/* Ações de CRUD para cada projeto. */
+.project-crud-actions { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.project-crud-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 6px 9px;
+  border: 1px solid;
+  border-radius: 7px;
+  background: #fff;
+  font: 700 11px/1 var(--font-body);
+  cursor: pointer;
+}
+.project-crud-actions button .admin-icon { width: 13px; height: 13px; }
+.project-crud-actions .crud-open { border-color: #d8e2f2; color: #405574; }
+.project-crud-actions .crud-edit { border-color: #a9c8ff; background: #edf5ff; color: #075de0; }
+.project-crud-actions .crud-delete { border-color: #ffd0d7; background: #fff6f7; color: #e33951; }
+.project-crud-actions button:hover { filter: brightness(.97); transform: translateY(-1px); }
+.admin-preview-image { display: block; width: 100%; max-height: 300px; margin: 0 0 18px; border-radius: 12px; object-fit: contain; background: #f3f7ff; }
+@media (max-width: 760px) {
+  .project-crud-actions { flex-wrap: wrap; }
+  .project-crud-actions button { padding: 6px 7px; font-size: 10px; }
+}
