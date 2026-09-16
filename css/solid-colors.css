@@ -32,7 +32,6 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .site-header nav a { font-family: var(--font-head); font-size: 13px; }
 .site-header .header-cta { border-radius: 999px; padding: 13px 20px; }
 .site-header .profile-area { display: none; }
-.mobile-nav-link { display: none; }
 .hero { min-height: 590px; display: grid; place-items: center; padding: 110px 24px 92px; text-align: center; }
 .hero-content { max-width: 710px; }
 .hero .eyebrow { margin-bottom: 20px; }
@@ -70,98 +69,6 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
   .site-header nav .desktop-nav-link { display: none; }
   .hero { min-height: 520px; padding-block: 76px 64px; }
   .hero h1 { font-size: clamp(38px, 11vw, 52px); }
-}
-
-/* Gaveta de navegação para celular. */
-.mobile-drawer-head,
-.mobile-menu-close,
-.mobile-drawer-cta { display: none; }
-
-@media (max-width: 680px) {
-  .site-header { z-index: 50; }
-  .mobile-menu-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 40;
-    background: #07183294;
-    backdrop-filter: blur(3px);
-  }
-  .site-header nav.mobile-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: auto;
-    z-index: 51;
-    display: flex;
-    width: min(86vw, 430px);
-    min-height: 100dvh;
-    padding: 28px 26px;
-    background: #fff;
-    box-shadow: -18px 0 45px #07183224;
-    transform: translateX(105%);
-    transition: transform .28s ease;
-    flex-direction: column;
-    gap: 18px;
-  }
-  .site-header nav.mobile-drawer::before { display: none; }
-  .site-header nav.mobile-drawer.open { display: flex; transform: translateX(0); }
-  .mobile-drawer-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 38px;
-  }
-  .mobile-drawer-head .brand { font-size: 29px; }
-  .mobile-drawer-head .brand img { width: 48px; height: 48px; }
-  .mobile-menu-close {
-    display: grid;
-    width: 52px;
-    height: 52px;
-    padding: 12px;
-    place-items: center;
-    border: 0;
-    background: transparent;
-    color: #071832;
-    cursor: pointer;
-  }
-  .mobile-menu-close svg { width: 31px; height: 31px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
-  .site-header nav.mobile-drawer .mobile-nav-link {
-    display: grid;
-    grid-template-columns: 46px 1fr auto;
-    align-items: center;
-    min-height: 82px;
-    color: #071832;
-    font-size: 23px;
-    font-weight: 800;
-  }
-  .site-header nav.mobile-drawer .mobile-nav-link svg,
-  .mobile-drawer-cta svg {
-    width: 31px;
-    height: 31px;
-    fill: none;
-    stroke: #087bff;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
-  }
-  .site-header nav.mobile-drawer .mobile-nav-link b,
-  .mobile-drawer-cta b { color: #2b3d66; font-size: 37px; font-weight: 400; line-height: 1; }
-  .mobile-drawer-cta {
-    display: grid;
-    grid-template-columns: 50px 1fr auto;
-    align-items: center;
-    gap: 11px;
-    margin-top: 20px;
-    padding: 25px 20px;
-    border-top: 1px solid #dce7f7;
-    border-radius: 20px;
-    background: #eef6ff;
-    color: #071832;
-    text-decoration: none;
-  }
-  .mobile-drawer-cta strong { display: block; font-family: var(--font-head); font-size: 18px; line-height: 1.25; }
-  .mobile-drawer-cta small { display: block; margin-top: 10px; color: #71809d; font-size: 15px; line-height: 1.35; }
 }
 
 /* Paleta azul sólida da referência mais recente. */
@@ -449,6 +356,7 @@ footer {
 /* Menu mobile isolado: não reutiliza nem altera a navegação do desktop. */
 #mobile-drawer,
 #mobile-menu-backdrop { display: none; }
+#mobile-menu-backdrop[hidden] { display: none !important; }
 
 @media (max-width: 680px) {
   body.mobile-menu-open { overflow: hidden; }
@@ -504,9 +412,14 @@ footer {
     stroke-width: 1.8;
   }
   .mobile-drawer__links {
+    position: static;
+    inset: auto;
     display: grid;
     gap: 22px;
     margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
   }
   .mobile-drawer__links a {
     display: grid;
