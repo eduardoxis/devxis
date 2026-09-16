@@ -105,6 +105,97 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
   .hero h1 { font-size: clamp(38px, 11vw, 52px); }
 }
 
+/* Gaveta de navegação para celular. */
+.mobile-drawer-head,
+.mobile-menu-close,
+.mobile-drawer-cta { display: none; }
+
+@media (max-width: 680px) {
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 39;
+    background: #07183294;
+    backdrop-filter: blur(3px);
+  }
+  .site-header nav.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 40;
+    display: flex;
+    width: min(86vw, 430px);
+    min-height: 100dvh;
+    padding: 28px 26px;
+    background: #fff;
+    box-shadow: -18px 0 45px #07183224;
+    transform: translateX(105%);
+    transition: transform .28s ease;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .site-header nav.mobile-drawer::before { display: none; }
+  .site-header nav.mobile-drawer.open { display: flex; transform: translateX(0); }
+  .mobile-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 38px;
+  }
+  .mobile-drawer-head .brand { font-size: 29px; }
+  .mobile-drawer-head .brand img { width: 48px; height: 48px; }
+  .mobile-menu-close {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    padding: 12px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #071832;
+    cursor: pointer;
+  }
+  .mobile-menu-close svg { width: 31px; height: 31px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
+  .site-header nav.mobile-drawer .mobile-nav-link {
+    display: grid;
+    grid-template-columns: 46px 1fr auto;
+    align-items: center;
+    min-height: 82px;
+    color: #071832;
+    font-size: 23px;
+    font-weight: 800;
+  }
+  .site-header nav.mobile-drawer .mobile-nav-link svg,
+  .mobile-drawer-cta svg {
+    width: 31px;
+    height: 31px;
+    fill: none;
+    stroke: #087bff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+  .site-header nav.mobile-drawer .mobile-nav-link b,
+  .mobile-drawer-cta b { color: #2b3d66; font-size: 37px; font-weight: 400; line-height: 1; }
+  .mobile-drawer-cta {
+    display: grid;
+    grid-template-columns: 50px 1fr auto;
+    align-items: center;
+    gap: 11px;
+    margin-top: 20px;
+    padding: 25px 20px;
+    border-top: 1px solid #dce7f7;
+    border-radius: 20px;
+    background: #eef6ff;
+    color: #071832;
+    text-decoration: none;
+  }
+  .mobile-drawer-cta strong { display: block; font-family: var(--font-head); font-size: 18px; line-height: 1.25; }
+  .mobile-drawer-cta small { display: block; margin-top: 10px; color: #71809d; font-size: 15px; line-height: 1.35; }
+}
+
 /* Paleta azul sólida da referência mais recente. */
 :root {
   --ink: #071832;
