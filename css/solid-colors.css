@@ -111,10 +111,11 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .mobile-drawer-cta { display: none; }
 
 @media (max-width: 680px) {
+  .site-header { z-index: 50; }
   .mobile-menu-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 39;
+    z-index: 40;
     background: #07183294;
     backdrop-filter: blur(3px);
   }
@@ -124,7 +125,7 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
     right: 0;
     bottom: 0;
     left: auto;
-    z-index: 40;
+    z-index: 51;
     display: flex;
     width: min(86vw, 430px);
     min-height: 100dvh;
