@@ -21,24 +21,16 @@
     <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
-    <nav class="mobile-drawer" aria-label="Menu principal">
-      <div class="mobile-drawer-head">
-        <a class="brand" href="#inicio" aria-label="DEVXIS, início"><img src="assets/images/logo-devxis.png" alt="DEVXIS"><span>dev<span>xis</span></span></a>
-        <button class="mobile-menu-close" type="button" aria-label="Fechar menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-      </div>
-      <a class="desktop-nav-link" href="#sobre">Sobre</a>
-      <a class="desktop-nav-link" href="#servicos">Como funciona</a>
-      <a class="desktop-nav-link" href="#precos">Planos</a>
-      <a class="mobile-nav-link" href="#tecnologias"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7M16 5l7 7-7 7M14 3l-4 18"/></svg><span>Tecnologias</span><b>›</b></a>
-      <a class="mobile-nav-link" href="#precos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 17l9 5 9-5"/></svg><span>Planos</span><b>›</b></a>
-      <a class="mobile-nav-link" href="#depoimentos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Parcerias</span><b>›</b></a>
-      <a class="mobile-nav-link" href="#orcamento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8ZM7 9h10M7 13h6"/></svg><span>Fale comigo</span><b>›</b></a>
-      <a class="mobile-drawer-cta" href="#orcamento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></svg><span><strong>Vamos tirar<br>sua ideia do papel?</strong><small>Fale comigo e comece hoje mesmo.</small></span><b>›</b></a>
-    </nav>
+    <nav aria-label="Menu principal"><a href="#sobre">Sobre</a><a href="#servicos">Como funciona</a><a href="#precos">Planos</a></nav>
     <a class="button primary header-cta" href="#orcamento">Começar agora <span>→</span></a>
     <div class="profile-area"><button id="profile-menu" class="profile-button" aria-expanded="false" aria-label="Abrir perfil">●</button><div id="profile-dropdown" class="profile-dropdown" hidden><span id="profile-status">Área do cliente</span><button id="open-admin" type="button">Entrar</button><button id="admin-access" type="button" hidden>Abrir painel</button></div></div>
   </header>
-  <div class="mobile-menu-backdrop" hidden></div>
+  <div id="mobile-menu-backdrop" hidden></div>
+  <aside id="mobile-drawer" aria-label="Menu mobile" aria-hidden="true">
+    <div class="mobile-drawer__head"><a class="brand" href="#inicio"><img src="assets/images/logo-devxis.png" alt="DEVXIS"><span>dev<span>xis</span></span></a><button id="mobile-menu-close" type="button" aria-label="Fechar menu"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <nav class="mobile-drawer__links"><a href="#tecnologias"><svg viewBox="0 0 24 24"><path d="m8 5-7 7 7 7M16 5l7 7-7 7M14 3l-4 18"/></svg><span>Tecnologias</span><b>›</b></a><a href="#precos"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 17l9 5 9-5"/></svg><span>Planos</span><b>›</b></a><a href="#depoimentos"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Parcerias</span><b>›</b></a><a href="#orcamento"><svg viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8ZM7 9h10M7 13h6"/></svg><span>Fale comigo</span><b>›</b></a></nav>
+    <a class="mobile-drawer__cta" href="#orcamento"><svg viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></svg><span><strong>Vamos tirar sua ideia do papel?</strong><small>Fale comigo e comece hoje mesmo.</small></span><b>›</b></a>
+  </aside>
 
   <main>
     <section id="inicio" class="hero">
