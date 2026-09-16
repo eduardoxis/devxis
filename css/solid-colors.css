@@ -462,7 +462,7 @@ footer {
   .mobile-drawer__cta small { display: block; margin-top: 10px; color: #687a99; font-size: 15px; line-height: 1.35; }
 }
 
-@media (max-width: 430px) {
+@media (max-width: 680px) {
   #mobile-drawer { padding: 25px 17px; }
   .mobile-drawer__head { margin-bottom: 42px; }
   .mobile-drawer__head .brand { font-size: 18px; }
