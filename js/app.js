@@ -7,6 +7,11 @@ const toast=message=>{const el=$('#toast');el.textContent=message;el.classList.a
 const pagination={pages:[],current:0,hasMore:false};
 $('#year').textContent=new Date().getFullYear();
 $('.menu-toggle').addEventListener('click',event=>{const nav=$('nav');nav.classList.toggle('open');event.currentTarget.setAttribute('aria-expanded',String(nav.classList.contains('open')))});
+document.querySelectorAll('.site-header nav a').forEach(link=>link.addEventListener('click',()=>{
+  const nav=$('.site-header nav'), toggle=$('.menu-toggle');
+  nav.classList.remove('open');
+  toggle.setAttribute('aria-expanded','false');
+}));
 
 function enableSectionAnimations(){if(!('IntersectionObserver' in window))return;const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('main > section').forEach(section=>{if(section.id!=='inicio'){section.classList.add('reveal-section');observer.observe(section)}})}
 enableSectionAnimations();

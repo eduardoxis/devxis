@@ -18,8 +18,18 @@
 <body>
   <header class="site-header">
     <a class="brand" href="#inicio" aria-label="DEVXIS, início"><img src="assets/images/logo-devxis.png" alt="DEVXIS"><span>dev<span>xis</span></span></a>
-    <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
-    <nav aria-label="Menu principal"><a href="#sobre">Sobre</a><a href="#servicos">Como funciona</a><a href="#precos">Planos</a></nav>
+    <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav aria-label="Menu principal">
+      <a class="desktop-nav-link" href="#sobre">Sobre</a>
+      <a class="desktop-nav-link" href="#servicos">Como funciona</a>
+      <a class="desktop-nav-link" href="#precos">Planos</a>
+      <a class="mobile-nav-link" href="#tecnologias">Tecnologias</a>
+      <a class="mobile-nav-link" href="#precos">Planos</a>
+      <a class="mobile-nav-link" href="#depoimentos">Parcerias</a>
+      <a class="mobile-nav-link" href="#orcamento">Fale comigo</a>
+    </nav>
     <a class="button primary header-cta" href="#orcamento">Começar agora <span>→</span></a>
     <div class="profile-area"><button id="profile-menu" class="profile-button" aria-expanded="false" aria-label="Abrir perfil">●</button><div id="profile-dropdown" class="profile-dropdown" hidden><span id="profile-status">Área do cliente</span><button id="open-admin" type="button">Entrar</button><button id="admin-access" type="button" hidden>Abrir painel</button></div></div>
   </header>

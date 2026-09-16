@@ -32,6 +32,7 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 .site-header nav a { font-family: var(--font-head); font-size: 13px; }
 .site-header .header-cta { border-radius: 999px; padding: 13px 20px; }
 .site-header .profile-area { display: none; }
+.mobile-nav-link { display: none; }
 .hero { min-height: 590px; display: grid; place-items: center; padding: 110px 24px 92px; text-align: center; }
 .hero-content { max-width: 710px; }
 .hero .eyebrow { margin-bottom: 20px; }
@@ -49,7 +50,57 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
 
 @media (max-width: 680px) {
   .site-header .profile-area { display: none; }
-  .site-header nav { margin: 0; }
+  .site-header {
+    height: 72px;
+    padding: 0 28px;
+    border-bottom-color: #e6edf8;
+  }
+  .site-header .brand { font-size: 20px; }
+  .site-header .brand img { width: 34px; height: 34px; }
+  .menu-toggle {
+    display: inline-grid;
+    width: 36px;
+    height: 36px;
+    margin-left: auto;
+    padding: 6px;
+    place-items: center;
+    color: #071832;
+  }
+  .menu-toggle svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
+  .site-header nav {
+    display: none;
+    position: absolute;
+    top: 71px;
+    right: 0;
+    left: 0;
+    z-index: 30;
+    min-height: 230px;
+    margin: 0;
+    padding: 50px 18px 22px;
+    background: #fff;
+    box-shadow: 0 18px 22px #07183218;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .site-header nav::before {
+    content: '';
+    width: 27px;
+    height: 3px;
+    margin-bottom: 10px;
+    border-radius: 99px;
+    background: #087bff;
+  }
+  .site-header nav.open { display: flex; }
+  .site-header nav .desktop-nav-link { display: none; }
+  .site-header nav .mobile-nav-link {
+    display: block;
+    color: #b7d7ff;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .site-header nav .mobile-nav-link:active,
+  .site-header nav .mobile-nav-link:hover { color: #087bff; }
   .hero { min-height: 520px; padding-block: 76px 64px; }
   .hero h1 { font-size: clamp(38px, 11vw, 52px); }
 }
