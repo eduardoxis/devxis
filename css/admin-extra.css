@@ -235,6 +235,7 @@
 .admin-form-heading,
 .admin-project-form label:nth-of-type(3),
 .admin-project-form .admin-image-field,
+.admin-project-form .admin-image-gallery,
 .admin-project-form .admin-publish-field,
 .admin-project-form button { grid-column: 1 / -1; }
 .admin-form-heading { display: grid; grid-template-columns: auto 1fr minmax(270px, .8fr); gap: 16px; align-items: center; }
@@ -259,13 +260,16 @@
 .admin-image-field small { color: #627699; font-weight: 400; }
 .admin-image-field input { width: 100%; min-height: 42px; padding: 8px; border-style: dashed; cursor: pointer; }
 .admin-image-field em { display: block; margin-top: 4px; color: #536c93; font-size: 11px; font-style: normal; font-weight: 500; }
-.admin-publish-field { display: flex; align-items: center; justify-content: space-between; }
+.admin-publish-field { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-right: 1px; }
 .admin-publish-field > span { margin: 0 !important; }
 .admin-publish-field small { display: block; margin-top: 3px; color: #607495; font-size: 11px; font-weight: 400; }
-.admin-publish-field input { width: 40px; height: 22px; margin: 0; appearance: none; border: 0; border-radius: 99px; background: #aabbd3; cursor: pointer; }
-.admin-publish-field input:checked { background: #087bff; }
-.admin-publish-field input::after { content: ''; display: block; width: 16px; height: 16px; margin: 3px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
-.admin-publish-field input:checked::after { transform: translateX(18px); }
+.admin-publish-field .admin-toggle { position: relative; width: 42px; height: 24px; flex: 0 0 42px; display: block; overflow: visible; }
+.admin-publish-field .admin-toggle input { position: absolute; inset: 0; z-index: 2; width: 42px; height: 24px; margin: 0; padding: 0; opacity: 0; cursor: pointer; }
+.admin-publish-field .admin-toggle > span { position: absolute; inset: 0; border-radius: 999px; background: #c7d2e2; box-shadow: inset 0 0 0 1px #b8c6d9; transition: background .18s ease, box-shadow .18s ease; }
+.admin-publish-field .admin-toggle > span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px #17345e33; transition: transform .18s ease; }
+.admin-publish-field .admin-toggle input:checked + span { background: #087bff; box-shadow: inset 0 0 0 1px #087bff; }
+.admin-publish-field .admin-toggle input:checked + span::after { transform: translateX(18px); }
+.admin-publish-field .admin-toggle input:focus-visible + span { outline: 3px solid #087bff33; outline-offset: 2px; }
 .admin-project-form button { min-height: 40px; border-radius: 9px; font-size: 12px; }
 .admin-list { overflow: hidden; margin-top: 14px; border: 1px solid #dce8f8; border-radius: 18px; background: #fff; }
 .admin-project-form + .admin-list::before { content: 'Projetos cadastrados'; display: block; padding: 15px 18px; border-bottom: 1px solid #dce8f8; color: #071832; font-size: 16px; font-weight: 800; }
@@ -344,9 +348,30 @@
 .project-crud-actions .crud-delete { border-color: #ffd0d7; background: #fff6f7; color: #e33951; }
 .project-crud-actions button:hover { filter: brightness(.97); transform: translateY(-1px); }
 .admin-preview-image { display: block; width: 100%; max-height: 300px; margin: 0 0 18px; border-radius: 12px; object-fit: contain; background: #f3f7ff; }
+.admin-image-gallery { min-width: 0; }
+.admin-image-gallery[hidden] { display: none; }
+.admin-image-gallery > strong { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #071832; font-size: 12px; }
+.admin-image-gallery > strong .admin-icon { width: 15px; height: 15px; color: #087bff; }
+.admin-image-gallery-list { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: 10px; overflow-x: auto; padding: 1px 1px 5px; scrollbar-width: thin; }
+.admin-image-gallery figure { position: relative; min-width: 0; aspect-ratio: 16 / 8.5; margin: 0; overflow: hidden; border: 1px solid #d6e3f5; border-radius: 10px; background: #eef4fc; }
+.admin-image-gallery figure > img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.admin-image-gallery .admin-image-remove { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 1px solid #d7e2f1; border-radius: 50%; background: #fff; color: #071832; box-shadow: 0 3px 10px #07183224; cursor: pointer; }
+.admin-image-gallery .admin-image-remove:hover { color: #e33951; border-color: #f2b8c1; background: #fff7f8; }
+.admin-image-gallery .admin-image-remove .admin-icon { width: 14px; height: 14px; }
+.admin-image-confirm { position: fixed; inset: 0; z-index: 140; display: grid; place-items: center; padding: 20px; background: #07183280; backdrop-filter: blur(5px); }
+.admin-image-confirm-box { width: min(390px, 100%); padding: 24px; border: 1px solid #dce8f8; border-radius: 16px; background: #fff; box-shadow: 0 24px 60px #07183238; text-align: center; }
+.admin-image-confirm-box h3 { margin: 0 0 8px; color: #071832; font: 700 18px/1.25 var(--font-head); }
+.admin-image-confirm-box p { margin: 0 0 22px; color: #5c7090; font-size: 13px; }
+.admin-image-confirm-box > div { display: flex; justify-content: center; gap: 10px; }
+.admin-image-confirm-box button { min-height: 38px; padding: 9px 14px; border: 1px solid #d4e2f5; border-radius: 9px; background: #fff; color: #17345e; font: 700 12px/1 var(--font-body); cursor: pointer; }
+.admin-image-confirm-box .admin-image-delete { border-color: #e33951; background: #e33951; color: #fff; }
+.admin-image-confirm-box .admin-image-delete:hover { background: #c92c43; }
 @media (max-width: 760px) {
   .project-crud-actions { flex-wrap: wrap; }
   .project-crud-actions button { padding: 6px 7px; font-size: 10px; }
+  .admin-image-gallery-list { grid-auto-columns: minmax(180px, 82%); }
+  .admin-image-confirm-box > div { flex-direction: column-reverse; }
+  .admin-image-confirm-box button { width: 100%; }
 }
 
 /* Controles adicionais do login, mantendo o modal compacto. */
