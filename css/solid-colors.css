@@ -478,3 +478,29 @@ footer {
   .mobile-drawer__cta strong { font-size: 11px; }
   .mobile-drawer__cta small { margin-top: 5px; font-size: 9px; }
 }
+
+/* Ajustes de largura e alinhamento das seções no celular. */
+@media (max-width: 680px) {
+  .trust.section-light {
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .pricing-section.section-light {
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .pricing-section .pricing-grid {
+    width: 100%;
+    max-width: 420px;
+    margin-right: auto;
+    margin-left: auto;
+    justify-items: center;
+  }
+  .pricing-section .price-card {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
