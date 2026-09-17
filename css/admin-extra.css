@@ -348,3 +348,72 @@
   .project-crud-actions { flex-wrap: wrap; }
   .project-crud-actions button { padding: 6px 7px; font-size: 10px; }
 }
+
+/* Controles adicionais do login, mantendo o modal compacto. */
+.admin-modal-box:has(#admin-login-view:not([hidden])) {
+  width: min(480px, calc(100vw - 32px));
+  min-height: 0;
+  max-height: calc(100vh - 32px);
+  padding: 24px 26px 28px;
+}
+#admin-login-view > h2 { margin: 18px 0 4px; }
+#admin-login-view > p { margin: 0 0 16px; color: #66738b; }
+#admin-login-form { margin: 0; padding: 18px 0 0; }
+#admin-login-form .admin-password-group { margin-bottom: 14px; }
+#admin-login-form .admin-password-group > label { margin-bottom: 0; }
+#admin-login-form .admin-password-field {
+  position: relative;
+  display: block;
+}
+#admin-login-form .admin-password-field input { padding-right: 44px; }
+#admin-login-form .admin-password-toggle {
+  position: absolute;
+  top: calc(50% + 3px);
+  right: 11px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #66738b;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+#admin-login-form .admin-password-toggle:hover,
+#admin-login-form .admin-password-toggle:focus-visible { color: #087bff; background: #edf5ff; }
+#admin-login-form .admin-password-toggle .admin-icon { width: 19px; height: 19px; }
+#admin-login-form .admin-remember {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 2px 0 16px;
+  color: #53647f;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+#admin-login-form .admin-remember input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: #087bff;
+  cursor: pointer;
+}
+#admin-login-form > .button { width: 100%; }
+#admin-login-form .admin-forgot-password {
+  display: block;
+  margin: 14px auto 0;
+  padding: 3px;
+  border: 0;
+  background: transparent;
+  color: #087bff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#admin-login-form .admin-forgot-password:hover { text-decoration: underline; }
