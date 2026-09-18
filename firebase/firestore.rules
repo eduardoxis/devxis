@@ -17,7 +17,7 @@ service cloud.firestore {
         (!data.keys().hasAny(['tecnologias']) || (data.tecnologias is list && data.tecnologias.size() <= 12)) &&
         (!data.keys().hasAny(['galeria']) || (data.galeria is list && data.galeria.size() <= 6)) &&
         (!data.keys().hasAny(['historico']) || (data.historico is list && data.historico.size() <= 50)) &&
-        (!data.keys().hasAny(['links']) || (data.links is map && data.links.keys().hasOnly(['projeto','github','behance','outro'])) &&
+        (!data.keys().hasAny(['links']) || (data.links is map && data.links.keys().hasOnly(['projeto','github','behance','outro']))) &&
         (!data.keys().hasAny(['seo']) || (data.seo is map && data.seo.keys().hasOnly(['titulo','descricao','imagem'])));
     }
     function validCategorySettings(data) { return data.keys().hasOnly(['items','atualizadoEm']) && data.items is list && data.items.size() <= 30; }
