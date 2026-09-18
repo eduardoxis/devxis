@@ -28,7 +28,7 @@ service cloud.firestore {
 
     match /projects/{id} {
       // Compatibilidade temporária com projetos antigos que ainda não têm status.
-      allow get, list: if resource.data.publicado == true && (!resource.data.keys().hasAny(['status']) || resource.data.status == 'publicado');
+      allow get, list: if admin() || (resource.data.publicado == true && (!resource.data.keys().hasAny(['status']) || resource.data.status == 'publicado'));
       allow create, update: if admin() && validProject(request.resource.data);
       allow delete: if admin();
     }
@@ -37,8 +37,8 @@ service cloud.firestore {
       allow get, list, create, delete: if admin();
       allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','atualizadoEm']);
     }
-    match /testimonials/{id} { allow get, list: if resource.data.publicado == true; allow create, update, delete: if admin(); }
-    match /technologies/{id} { allow get, list: if resource.data.publicado == true; allow create, update, delete: if admin(); }
+    match /testimonials/{id} { allow get, list: if admin() || resource.data.publicado == true; allow create, update, delete: if admin(); }
+    match /technologies/{id} { allow get, list: if admin() || resource.data.publicado == true; allow create, update, delete: if admin(); }
     match /profile/public { allow get: if true; allow create, update, delete: if admin(); }
     match /profile/{id} { allow read, write: if admin(); }
     match /settings/categories { allow read: if admin(); allow create, update: if admin() && validCategorySettings(request.resource.data); allow delete: if admin(); }
