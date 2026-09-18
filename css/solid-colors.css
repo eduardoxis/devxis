@@ -71,6 +71,37 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
   .hero h1 { font-size: clamp(38px, 11vw, 52px); }
 }
 
+/* Etiquetas de categoria e tipo dentro do conteúdo do card de projeto. */
+.project-content .project-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 11px;
+}
+
+.project-content .project-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 23px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.project-content .project-category {
+  background: #e8f3ff;
+  color: #087bff;
+}
+
+.project-content .project-type {
+  background: #f1efff;
+  color: #5139c9;
+}
+
 /* Paleta azul sólida da referência mais recente. */
 :root {
   --ink: #071832;
