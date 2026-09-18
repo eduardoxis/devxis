@@ -102,6 +102,12 @@ body,button,input,select,textarea,.button{font-family:var(--font-body)}
   color: #5139c9;
 }
 
+/* Mostra um pouco mais do layout enviado na imagem de cada projeto. */
+.project-image:not(.no-image) {
+  background-size: 92% auto;
+  background-color: #edf4fb;
+}
+
 /* Paleta azul sólida da referência mais recente. */
 :root {
   --ink: #071832;

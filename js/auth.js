@@ -22,7 +22,7 @@ form?.addEventListener('submit', async event => {
     }
     location.href = 'dashboard.html';
   } catch (error) {
-    console.warn('admin_login_denied', error?.code || 'unknown');
+    if (location.hostname === 'localhost') console.warn('admin_login_denied', error?.code || 'unknown');
     say('E-mail ou senha inválidos, ou conta sem acesso ao painel.');
   } finally {
     button.disabled = false;
