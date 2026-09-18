@@ -11,13 +11,15 @@ service cloud.firestore {
     function isText(value, max) { return value is string && value.size() <= max; }
     function optionalText(data, key, max) { return !data.keys().hasAny([key]) || isText(data[key], max); }
     function validStatus(value) { return value in ['rascunho', 'publicado', 'arquivado', 'lixeira']; }
+    function projectFields() {
+      return ['nome','slug','categoriaId','categoria','descricaoCurta','descricaoCompleta','descricao','status','publicado','ordem','cliente','ano','tipoTrabalho','tecnologias','links','seo','destaque','galeria','imagem','imagens','historico','criadoEm','atualizadoEm','publicadoEm','statusAntesLixeira','linkDemonstracao'];
+    }
     function validProject(data) {
-      return data.keys().hasOnly(['nome','slug','categoriaId','categoria','descricaoCurta','descricaoCompleta','descricao','status','publicado','ordem','cliente','ano','tipoTrabalho','tecnologias','links','seo','destaque','galeria','imagem','historico','criadoEm','atualizadoEm','publicadoEm','statusAntesLixeira','linkDemonstracao']) &&
-        isText(data.nome,100) && isText(data.slug,90) && data.slug.matches('[a-z0-9]+(-[a-z0-9]+)*') &&
+      return isText(data.nome,100) && isText(data.slug,90) && data.slug.matches('[a-z0-9]+(-[a-z0-9]+)*') &&
         isText(data.categoriaId,100) && isText(data.categoria,60) && isText(data.descricaoCurta,300) &&
         validStatus(data.status) && data.publicado is bool && data.destaque is bool && data.ordem is number && data.ordem >= 0 && data.ordem <= 100000 &&
         (!data.keys().hasAny(['ano']) || data.ano == '' || (data.ano is number && data.ano >= 1990 && data.ano <= 2100)) &&
-        optionalText(data,'descricaoCompleta',5000) && optionalText(data,'descricao',5000) && optionalText(data,'cliente',100) && optionalText(data,'tipoTrabalho',80) && optionalText(data,'imagem',180000) && optionalText(data,'statusAntesLixeira',20) &&
+        optionalText(data,'descricaoCompleta',5000) && optionalText(data,'descricao',5000) && optionalText(data,'cliente',100) && optionalText(data,'tipoTrabalho',80) && optionalText(data,'imagem',900000) && optionalText(data,'statusAntesLixeira',20) &&
         (!data.keys().hasAny(['tecnologias']) || (data.tecnologias is list && data.tecnologias.size() <= 12)) &&
         (!data.keys().hasAny(['galeria']) || (data.galeria is list && data.galeria.size() <= 6)) &&
         (!data.keys().hasAny(['historico']) || (data.historico is list && data.historico.size() <= 50)) &&
@@ -29,7 +31,8 @@ service cloud.firestore {
     match /projects/{id} {
       // Compatibilidade temporária com projetos antigos que ainda não têm status.
       allow get, list: if admin() || (resource.data.publicado == true && (!resource.data.keys().hasAny(['status']) || resource.data.status == 'publicado'));
-      allow create, update: if admin() && validProject(request.resource.data);
+      allow create: if admin() && request.resource.data.keys().hasOnly(projectFields()) && validProject(request.resource.data);
+      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(projectFields()) && validProject(request.resource.data);
       allow delete: if admin();
     }
     match /quotes/{id} {
