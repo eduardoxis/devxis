@@ -1,6 +1,6 @@
 import {auth,db,firebaseReady} from '../firebase/firebase-config.js';
-import {signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import {doc,getDoc,setDoc,collection,getDocs,addDoc,updateDoc,deleteDoc,deleteField,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import {signInWithEmailAndPassword,signOut,onAuthStateChanged,getIdTokenResult,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import {doc,getDoc,setDoc,collection,getDocs,query,limit,addDoc,updateDoc,deleteDoc,deleteField,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {withLoading} from './utils/loading.js';
 import {compressImage} from './utils/image-compressor.js?v=gallery-advanced-1';
 
@@ -55,7 +55,7 @@ const nowHistory=action=>({acao:action,em:new Date().toISOString()});
 const dateText=value=>{const date=value?.toDate?.()||new Date(value||0);return Number.isNaN(date.getTime())?'—':date.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})};
 const dateValue=value=>{const date=value?.toDate?.()||new Date(value||0);if(Number.isNaN(date.getTime()))return'';return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`};
 const statusOf=project=>project.status||(project.publicado?'publicado':'rascunho');
-const collectionItems=async name=>{const snap=await getDocs(collection(db,name));return snap.docs.map(item=>({id:item.id,...item.data()}))};
+const collectionItems=async(name,maxItems=200)=>{const snap=await getDocs(query(collection(db,name),limit(maxItems)));return snap.docs.map(item=>({id:item.id,...item.data()}))};
 const button=(label,className,handler,icon='')=>{const item=document.createElement('button');item.type='button';item.className=className;item.innerHTML=`${icon}${label}`;item.onclick=handler;return item};
 
 function close(){modal.hidden=true}
@@ -64,7 +64,7 @@ $('#profile-menu').onclick=()=>{$('#profile-dropdown').hidden=!$('#profile-dropd
 $('#open-admin').onclick=open;$('#footer-admin').onclick=open;$('#admin-access').onclick=open;$('#close-admin').onclick=close;
 modal.onclick=event=>{if(event.target===modal)close()};
 
-async function isAdmin(user){if(!user||!firebaseReady)return false;const record=await getDoc(doc(db,'users',user.uid));return record.exists()&&record.data().isAdmin===true}
+async function isAdmin(user,refresh=false){if(!user||!firebaseReady)return false;const token=await getIdTokenResult(user,refresh);return token.claims.admin===true}
 function setTab(tab){activeTab=tab;document.querySelectorAll('[data-admin-tab]').forEach(item=>item.classList.toggle('active',item.dataset.adminTab===tab));renderTab().catch(error=>{console.error(error);toast('Não foi possível carregar esta área.','error')})}
 document.querySelectorAll('[data-admin-tab]').forEach(item=>item.onclick=()=>setTab(item.dataset.adminTab));
 
@@ -171,7 +171,7 @@ async function renderTab(){content.replaceChildren();if(activeTab==='overview')r
 async function showAdmin(user){if(!await isAdmin(user)){await signOut(auth);throw new Error('Esta conta não tem autorização para o painel.')}loginView.hidden=true;dashboardView.hidden=false;setTab('overview')}
 const loginForm=$('#admin-login-form'),passwordInput=$('#admin-password'),passwordToggle=$('#toggle-admin-password');
 passwordToggle.addEventListener('click',()=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';passwordToggle.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');passwordToggle.setAttribute('aria-pressed',String(!showing));passwordInput.focus()});
-$('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Enviamos o link de recuperação para o seu e-mail.')}catch(error){toast('Não foi possível enviar a recuperação de senha.','error')}});
-loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');await showAdmin(result.user)}catch(error){toast(error.message||'Não foi possível entrar.','error')}finally{submit.disabled=false}});
+$('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Se existir uma conta associada, você receberá instruções de recuperação.')}catch{toast('Se existir uma conta associada, você receberá instruções de recuperação.')}});
+loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');await showAdmin(result.user,true)}catch(error){console.warn('admin_login_denied',error?.code||'unknown');toast('E-mail ou senha inválidos, ou conta sem acesso ao painel.','error')}finally{submit.disabled=false}});
 $('#admin-logout').onclick=async()=>{await signOut(auth);dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren();toast('Sessão encerrada.')};
 if(firebaseReady)onAuthStateChanged(auth,async user=>{const access=$('#admin-access'),login=$('#open-admin');access.hidden=true;login.hidden=false;if(user&&await isAdmin(user)){access.hidden=false;login.hidden=true}});

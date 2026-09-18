@@ -2,21 +2,44 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    function admin() {
-      return signedIn()
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    // Custom Claim emitida somente por Firebase Admin SDK em ambiente confiável.
+    function admin() { return signedIn() && request.auth.token.admin == true; }
+    function isText(value, max) { return value is string && value.size() <= max; }
+    function optionalText(data, key, max) { return !data.keys().hasAny([key]) || isText(data[key], max); }
+    function validStatus(value) { return value in ['rascunho', 'publicado', 'arquivado', 'lixeira']; }
+    function validProject(data) {
+      return data.keys().hasOnly(['nome','slug','categoriaId','categoria','descricaoCurta','descricaoCompleta','descricao','status','publicado','ordem','cliente','ano','tipoTrabalho','tecnologias','links','seo','destaque','galeria','imagem','historico','criadoEm','atualizadoEm','publicadoEm','statusAntesLixeira','linkDemonstracao']) &&
+        isText(data.nome,100) && isText(data.slug,90) && data.slug.matches('[a-z0-9]+(-[a-z0-9]+)*') &&
+        isText(data.categoriaId,100) && isText(data.categoria,60) && isText(data.descricaoCurta,300) &&
+        validStatus(data.status) && data.publicado is bool && data.destaque is bool && data.ordem is number && data.ordem >= 0 && data.ordem <= 100000 &&
+        (!data.keys().hasAny(['ano']) || data.ano == '' || (data.ano is number && data.ano >= 1990 && data.ano <= 2100)) &&
+        optionalText(data,'descricaoCompleta',5000) && optionalText(data,'descricao',5000) && optionalText(data,'cliente',100) && optionalText(data,'tipoTrabalho',80) && optionalText(data,'imagem',180000) && optionalText(data,'statusAntesLixeira',20) &&
+        (!data.keys().hasAny(['tecnologias']) || (data.tecnologias is list && data.tecnologias.size() <= 12)) &&
+        (!data.keys().hasAny(['galeria']) || (data.galeria is list && data.galeria.size() <= 6)) &&
+        (!data.keys().hasAny(['historico']) || (data.historico is list && data.historico.size() <= 50)) &&
+        (!data.keys().hasAny(['links']) || (data.links is map && data.links.keys().hasOnly(['projeto','github','behance','outro'])) &&
+        (!data.keys().hasAny(['seo']) || (data.seo is map && data.seo.keys().hasOnly(['titulo','descricao','imagem'])));
     }
-    match /projects/{id} { allow get, list: if resource.data.publicado == true || admin(); allow create, update, delete: if admin(); }
-    match /testimonials/{id} { allow get, list: if resource.data.publicado == true || admin(); allow create, update, delete: if admin(); }
-    match /technologies/{id} { allow get, list: if resource.data.publicado == true || admin(); allow create, update, delete: if admin(); }
-    match /profile/{id} { allow get: if true; allow create, update, delete: if admin(); }
-    match /settings/{id} { allow get: if true; allow create, update, delete: if admin(); }
-    match /quotes/{id} { allow read, write: if admin(); }
-    match /users/{id} {
-      allow get: if signedIn() && (request.auth.uid == id || admin());
-      allow list: if admin();
-      allow create, update, delete: if false;
+    function validCategorySettings(data) { return data.keys().hasOnly(['items','atualizadoEm']) && data.items is list && data.items.size() <= 30; }
+
+    match /projects/{id} {
+      // Compatibilidade temporária com projetos antigos que ainda não têm status.
+      allow get, list: if resource.data.publicado == true && (!resource.data.keys().hasAny(['status']) || resource.data.status == 'publicado');
+      allow create, update: if admin() && validProject(request.resource.data);
+      allow delete: if admin();
     }
+    match /quotes/{id} {
+      // Criação é exclusivamente pela API com Admin SDK; orçamento nunca é público.
+      allow get, list, create, delete: if admin();
+      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','atualizadoEm']);
+    }
+    match /testimonials/{id} { allow get, list: if resource.data.publicado == true; allow create, update, delete: if admin(); }
+    match /technologies/{id} { allow get, list: if resource.data.publicado == true; allow create, update, delete: if admin(); }
+    match /profile/public { allow get: if true; allow create, update, delete: if admin(); }
+    match /profile/{id} { allow read, write: if admin(); }
+    match /settings/categories { allow read: if admin(); allow create, update: if admin() && validCategorySettings(request.resource.data); allow delete: if admin(); }
+    match /settings/{id} { allow read, write: if admin(); }
+    match /users/{id} { allow get: if signedIn() && request.auth.uid == id; allow list: if admin(); allow create, update, delete: if false; }
+    match /rate_limits/{id} { allow read, write: if false; }
   }
 }

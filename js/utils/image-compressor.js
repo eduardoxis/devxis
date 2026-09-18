@@ -1,11 +1,23 @@
-const MAX_BYTES = 130 * 1024;
+// Seis imagens permanecem abaixo do limite de 1 MiB do documento Firestore.
+const MAX_BYTES = 100 * 1024;
+const MAX_DIMENSION = 6000;
+const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']);
+
+async function hasValidImageSignature(file) {
+  const bytes = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const starts = (...values) => values.every((value, index) => bytes[index] === value);
+  return starts(0xff, 0xd8, 0xff) || starts(0x89, 0x50, 0x4e, 0x47) ||
+    String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP' ||
+    String.fromCharCode(...bytes.slice(0, 6)) === 'GIF87a' || String.fromCharCode(...bytes.slice(0, 6)) === 'GIF89a' ||
+    String.fromCharCode(...bytes.slice(4, 8)) === 'ftyp';
+}
 
 function canvasToDataUrl(canvas, quality) {
   return canvas.toDataURL('image/webp', quality);
 }
 
 export async function compressImage(file) {
-  if (!file?.type?.startsWith('image/')) {
+  if (!file || !allowedTypes.has(file.type) || !(await hasValidImageSignature(file))) {
     throw new Error('Escolha uma imagem válida.');
   }
 
@@ -14,6 +26,10 @@ export async function compressImage(file) {
   }
 
   const bitmap = await createImageBitmap(file);
+  if (!bitmap.width || !bitmap.height || bitmap.width > MAX_DIMENSION || bitmap.height > MAX_DIMENSION) {
+    bitmap.close();
+    throw new Error('A imagem possui dimensões muito grandes.');
+  }
   let width = Math.min(bitmap.width, 1280);
   let height = Math.round(bitmap.height * (width / bitmap.width));
   let output = '';
