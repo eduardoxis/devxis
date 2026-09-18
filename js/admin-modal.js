@@ -59,7 +59,18 @@ const collectionItems=async(name,maxItems=200)=>{const snap=await getDocs(query(
 const button=(label,className,handler,icon='')=>{const item=document.createElement('button');item.type='button';item.className=className;item.innerHTML=`${icon}${label}`;item.onclick=handler;return item};
 
 function close(){modal.hidden=true}
-function open(){modal.hidden=false}
+async function open(){
+  modal.hidden=false;
+  const user=auth?.currentUser;
+  if(user&&await isAdmin(user)){
+    loginView.hidden=true;
+    dashboardView.hidden=false;
+    if(!content.childElementCount)setTab('overview');
+    return;
+  }
+  dashboardView.hidden=true;
+  loginView.hidden=false;
+}
 $('#profile-menu').onclick=()=>{$('#profile-dropdown').hidden=!$('#profile-dropdown').hidden};
 $('#open-admin').onclick=open;$('#footer-admin').onclick=open;$('#admin-access').onclick=open;$('#close-admin').onclick=close;
 modal.onclick=event=>{if(event.target===modal)close()};
@@ -174,4 +185,4 @@ passwordToggle.addEventListener('click',()=>{const showing=passwordInput.type===
 $('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Se existir uma conta associada, você receberá instruções de recuperação.')}catch{toast('Se existir uma conta associada, você receberá instruções de recuperação.')}});
 loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');await showAdmin(result.user,true)}catch(error){if(location.hostname==='localhost')console.warn('admin_login_denied',error?.code||'unknown');toast('E-mail ou senha inválidos, ou conta sem acesso ao painel.','error')}finally{submit.disabled=false}});
 $('#admin-logout').onclick=async()=>{await signOut(auth);dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren();toast('Sessão encerrada.')};
-if(firebaseReady)onAuthStateChanged(auth,async user=>{const access=$('#admin-access'),login=$('#open-admin');access.hidden=true;login.hidden=false;if(user&&await isAdmin(user)){access.hidden=false;login.hidden=true}});
+if(firebaseReady)onAuthStateChanged(auth,async user=>{const access=$('#admin-access'),login=$('#open-admin');access.hidden=true;login.hidden=false;if(user&&await isAdmin(user)){access.hidden=false;login.hidden=true;loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
