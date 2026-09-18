@@ -27,6 +27,10 @@ function saveCache(key, value) {
 function mapDocs(snapshot) {
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
+function byProjectOrder(first, second) {
+  if (Boolean(first.destaque) !== Boolean(second.destaque)) return first.destaque ? -1 : 1;
+  return (first.ordem ?? Number.MAX_SAFE_INTEGER) - (second.ordem ?? Number.MAX_SAFE_INTEGER);
+}
 function byNewest(first, second) {
   return (second.ordem || 0) - (first.ordem || 0);
 }
@@ -42,7 +46,7 @@ export async function getProjectsPage(cursor = 0, pageSize = 6) {
       const snapshot = await getDocs(
         publicQuery('projects', 30),
       );
-      publicProjects = mapDocs(snapshot).sort(byNewest);
+      publicProjects = mapDocs(snapshot).sort(byProjectOrder);
     }
 
     const offset = Number(cursor) || 0;
@@ -81,7 +85,7 @@ export function watchProjects(onChange) {
   return onSnapshot(
     publicQuery('projects', 30),
     (snapshot) => {
-      publicProjects = mapDocs(snapshot).sort(byNewest);
+      publicProjects = mapDocs(snapshot).sort(byProjectOrder);
       onChange(publicProjects);
     },
     (error) => console.warn('Atualização de projetos indisponível.', error.code || error),

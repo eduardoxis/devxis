@@ -1,4 +1,4 @@
-const MAX_BYTES = 350 * 1024;
+const MAX_BYTES = 130 * 1024;
 
 function canvasToDataUrl(canvas, quality) {
   return canvas.toDataURL('image/webp', quality);
