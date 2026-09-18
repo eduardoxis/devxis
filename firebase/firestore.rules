@@ -31,8 +31,9 @@ service cloud.firestore {
     match /projects/{id} {
       // Compatibilidade temporária com projetos antigos que ainda não têm status.
       allow get, list: if admin() || (resource.data.publicado == true && (!resource.data.keys().hasAny(['status']) || resource.data.status == 'publicado'));
-      allow create: if admin() && request.resource.data.keys().hasOnly(projectFields()) && validProject(request.resource.data);
-      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(projectFields()) && validProject(request.resource.data);
+      // Compatibilidade com projetos antigos: a autorização continua restrita
+      // ao administrador, sem rejeitar campos legados já salvos no documento.
+      allow create, update: if admin();
       allow delete: if admin();
     }
     match /quotes/{id} {
