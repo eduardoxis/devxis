@@ -1,5 +1,5 @@
 import {auth,db,firebaseReady} from '../firebase/firebase-config.js';
-import {signInWithEmailAndPassword,signOut,onAuthStateChanged,getIdTokenResult,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import {signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import {doc,getDoc,setDoc,collection,getDocs,query,limit,addDoc,updateDoc,deleteDoc,deleteField,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {withLoading} from './utils/loading.js';
 import {compressImage} from './utils/image-compressor.js?v=gallery-advanced-1';
@@ -64,7 +64,7 @@ $('#profile-menu').onclick=()=>{$('#profile-dropdown').hidden=!$('#profile-dropd
 $('#open-admin').onclick=open;$('#footer-admin').onclick=open;$('#admin-access').onclick=open;$('#close-admin').onclick=close;
 modal.onclick=event=>{if(event.target===modal)close()};
 
-async function isAdmin(user,refresh=false){if(!user||!firebaseReady)return false;const token=await getIdTokenResult(user,refresh);return token.claims.admin===true}
+async function isAdmin(user){if(!user||!firebaseReady)return false;const record=await getDoc(doc(db,'users',user.uid));return record.exists()&&record.data().isAdmin===true}
 function setTab(tab){activeTab=tab;document.querySelectorAll('[data-admin-tab]').forEach(item=>item.classList.toggle('active',item.dataset.adminTab===tab));renderTab().catch(error=>{console.error(error);toast('Não foi possível carregar esta área.','error')})}
 document.querySelectorAll('[data-admin-tab]').forEach(item=>item.onclick=()=>setTab(item.dataset.adminTab));
 

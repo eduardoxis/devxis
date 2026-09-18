@@ -6,17 +6,17 @@ Site estático em HTML/CSS/JavaScript com Firebase Authentication, Firestore e A
 
 ### Administradores
 
-O painel usa exclusivamente a Custom Claim `admin: true` do Firebase Authentication. O documento `users/{uid}` **não** concede privilégio e clientes não podem gravá-lo.
+O painel usa exclusivamente o documento protegido `users/{uid}`. Clientes podem consultar apenas o próprio cadastro e não podem criar, editar ou excluir documentos dessa coleção.
 
-Defina ou remova a claim somente em ambiente confiável com Firebase Admin SDK:
+Crie ou altere o cadastro administrativo somente pelo Firebase Console ou pelo Firebase Admin SDK:
 
 ```js
-import { getAuth } from 'firebase-admin/auth';
-await getAuth().setCustomUserClaims('UID_DO_USUARIO', { admin: true });
-// Para remover: await getAuth().setCustomUserClaims('UID_DO_USUARIO', { admin: null });
+import { getFirestore } from 'firebase-admin/firestore';
+await getFirestore().doc('users/UID_DO_USUARIO').set({ isAdmin: true }, { merge: true });
+// Para remover o acesso, altere isAdmin para false.
 ```
 
-Depois de alterar a claim, o usuário deve sair e entrar novamente (ou renovar o token). Nunca crie uma rota pública para isso.
+Nunca crie uma rota pública que permita editar `users/{uid}`.
 
 ### Firebase
 
@@ -48,7 +48,7 @@ O rate limit cria documentos internos em `rate_limits`; eles não podem ser lido
 1. Não versione `.env`, service accounts, tokens ou chaves privadas.
 2. Rode verificações de sintaxe: `node --check api/quotes.js` e `node --check js/admin-modal.js`.
 3. Valide o JSON: `node -e "JSON.parse(require('fs').readFileSync('vercel.json'))"`.
-4. Teste no Firebase Emulator: visitante não cria/lê projetos privados ou orçamentos; usuário comum não altera `users`, `settings` ou projetos; somente Custom Claim administrativa opera o painel.
+4. Teste no Firebase Emulator: visitante não cria/lê projetos privados ou orçamentos; usuário comum não altera `users`, `settings` ou projetos; somente cadastro administrativo protegido opera o painel.
 5. Confirme que a CSP e o formulário de orçamento funcionam no domínio final.
 
 ## Limitações conhecidas

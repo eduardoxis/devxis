@@ -1,5 +1,6 @@
-import { auth, firebaseReady } from '../firebase/firebase-config.js';
-import { signInWithEmailAndPassword, signOut, getIdTokenResult } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { auth, db, firebaseReady } from '../firebase/firebase-config.js';
+import { signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const form = document.querySelector('#login-form');
 const toast = document.querySelector('#toast');
@@ -15,8 +16,8 @@ form?.addEventListener('submit', async event => {
   try {
     button.disabled = true;
     const result = await signInWithEmailAndPassword(auth, email, password);
-    const token = await getIdTokenResult(result.user, true);
-    if (token.claims.admin !== true) {
+    const adminRecord = await getDoc(doc(db, 'users', result.user.uid));
+    if (!adminRecord.exists() || adminRecord.data().isAdmin !== true) {
       await signOut(auth);
       throw new Error('not-authorized');
     }

@@ -2,8 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    // Custom Claim emitida somente por Firebase Admin SDK em ambiente confiável.
-    function admin() { return signedIn() && request.auth.token.admin == true; }
+    // Fonte única de autorização. Clientes nunca podem gravar em users.
+    function admin() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
     function isText(value, max) { return value is string && value.size() <= max; }
     function optionalText(data, key, max) { return !data.keys().hasAny([key]) || isText(data[key], max); }
     function validStatus(value) { return value in ['rascunho', 'publicado', 'arquivado', 'lixeira']; }
