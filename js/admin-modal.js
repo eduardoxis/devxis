@@ -183,6 +183,50 @@ async function ensureDemoProjects(){
     });
   }));
 }
+async function importedGallery(entries){
+  const images=Array.isArray(entries)?entries.slice(0,6):[];
+  const gallery=[];
+  for(let index=0;index<images.length;index+=1){
+    const entry=images[index]||{};
+    let url=String(entry.url||'');
+    if(!url.startsWith('data:image/'))throw new Error('O JSON contém uma imagem inválida.');
+    if(!url.startsWith('data:image/webp')){
+      const response=await fetch(url),blob=await response.blob();
+      url=await compressImage(new File([blob],`imagem-${index}.png`,{type:blob.type||'image/png'}));
+    }
+    if(Math.ceil(url.length*.75)>120*1024)throw new Error('Uma imagem do JSON ficou maior que o limite permitido.');
+    gallery.push({id:String(entry.id||`import-${Date.now()}-${index}`),url,legenda:String(entry.legenda||'').slice(0,180),capa:Boolean(entry.capa)});
+  }
+  if(gallery.length&&!gallery.some(item=>item.capa))gallery[0].capa=true;
+  return gallery;
+}
+async function importProjectsJson(){
+  const input=document.createElement('input');input.type='file';input.accept='application/json,.json';
+  input.onchange=async()=>{
+    const file=input.files?.[0];input.remove();if(!file)return;
+    try{
+      const payload=JSON.parse(await file.text());
+      const projects=Array.isArray(payload)?payload:payload.projects;
+      if(!Array.isArray(projects)||!projects.length)throw new Error('Use um JSON com a lista “projects”.');
+      if(!await confirmAction({title:'Importar JSON',message:`Importar ${projects.length} projeto(s), incluindo as galerias no Firestore?`,confirmLabel:'Importar projetos',danger:false}))return;
+      const categories=await ensureCategories(),current=await collectionItems('projects');
+      let imported=0;
+      for(const source of projects){
+        const nome=String(source.nome||'').trim();if(!nome)throw new Error('Todo projeto precisa ter um nome.');
+        const category=categories.find(item=>item.id===source.categoriaId||item.slug===source.categoriaSlug||item.nome===source.categoria)||categories[0];
+        const gallery=await importedGallery(source.galeria);
+        const status=['rascunho','publicado','arquivado','lixeira'].includes(source.status)?source.status:'publicado';
+        const existing=current.find(item=>(source.seedKey&&item.seedKey===source.seedKey)||item.slug===slugify(source.slug||nome));
+        const data={seedKey:source.seedKey||'',nome,slug:slugify(source.slug||nome),categoriaId:category?.id||'',categoria:category?.nome||'',descricaoCurta:String(source.descricaoCurta||'').slice(0,300),descricaoCompleta:String(source.descricaoCompleta||source.descricao||'').slice(0,5000),status,publicado:status==='publicado',ordem:Number(source.ordem)||imported+1,cliente:String(source.cliente||'').slice(0,100),ano:Number(source.ano)||'',tipoTrabalho:String(source.tipoTrabalho||'').slice(0,80),tecnologias:Array.isArray(source.tecnologias)?source.tecnologias.slice(0,12):[],links:source.links&&typeof source.links==='object'?source.links:{projeto:'',github:'',behance:'',outro:''},seo:source.seo&&typeof source.seo==='object'?source.seo:{titulo:nome,descricao:'',imagem:''},destaque:Boolean(source.destaque),galeria:gallery,imagem:gallery.find(item=>item.capa)?.url||gallery[0]?.url||'',historico:[...(existing?.historico||[]),nowHistory('Projeto importado por JSON')],atualizadoEm:serverTimestamp()};
+        if(status==='publicado')data.publicadoEm=serverTimestamp();
+        if(existing)await updateDoc(doc(db,'projects',existing.id),data);else await addDoc(collection(db,'projects'),{...data,criadoEm:serverTimestamp()});
+        imported+=1;
+      }
+      toast(`${imported} projeto(s) importado(s) com sucesso.`);renderProjectsManager();
+    }catch(error){console.error(error);toast(error.message||'Não foi possível importar o JSON.','error')}
+  };
+  input.click();
+}
 
 function statusBadge(status){const badge=document.createElement('span');badge.className=`admin-status status-${status}`;badge.textContent=status[0].toUpperCase()+status.slice(1);return badge}
 function projectCover(project){const cover=project.galeria?.find(item=>item.capa)||project.galeria?.[0];return cover?.url||project.imagem||project.imagens?.[0]||''}
@@ -253,7 +297,7 @@ async function moveProject(project,direction,visible){const index=visible.findIn
 
 function projectRow(project,visible){const row=document.createElement('article');row.className='admin-project-row';const thumb=document.createElement('img');thumb.src=projectCover(project)||'assets/images/logo-devxis.png';thumb.alt='';const info=document.createElement('div');const title=document.createElement('b');title.textContent=project.nome||'Sem nome';const meta=document.createElement('span');meta.textContent=`${project.categoria||'Sem categoria'} · ordem ${project.ordem??0}`;info.append(title,meta);const badge=statusBadge(statusOf(project));const actions=document.createElement('div');actions.className='project-crud-actions';if(statusOf(project)==='lixeira'){actions.append(button('Restaurar','crud-open',()=>changeProjectStatus(project,project.statusAntesLixeira||'rascunho','Restaurar projeto'),icons.restore),button('Excluir','crud-delete',()=>permanentlyDelete(project),icons.trash))}else{actions.append(button('Ver','crud-open',()=>previewProject(project),icons.eye),button('Editar','crud-edit',async()=>content.replaceChildren(await projectForm(project)),icons.edit),button('Duplicar','crud-open',()=>duplicateProject(project),icons.copy),button('Arquivar','crud-open',()=>changeProjectStatus(project,'arquivado','Arquivar projeto'),icons.archive),button('Lixeira','crud-delete',()=>changeProjectStatus(project,'lixeira','Mover para a lixeira'),icons.trash),button('↑','admin-order-button',()=>moveProject(project,-1,visible)),button('↓','admin-order-button',()=>moveProject(project,1,visible)))}row.append(thumb,info,badge,actions);return row}
 async function renderProjectsManager(){
-  content.replaceChildren();const [projects,categories]=await Promise.all([loadProjects(),ensureCategories()]);const section=document.createElement('section');section.className='admin-manager';const head=document.createElement('header');head.innerHTML='<div><h3>Projetos</h3><p>Gerencie, publique, organize e restaure seus trabalhos.</p></div>';head.append(button('Novo projeto','button primary',async()=>content.replaceChildren(await projectForm()),icons.plus));
+  content.replaceChildren();const [projects,categories]=await Promise.all([loadProjects(),ensureCategories()]);const section=document.createElement('section');section.className='admin-manager';const head=document.createElement('header');head.innerHTML='<div><h3>Projetos</h3><p>Gerencie, publique, organize e restaure seus trabalhos.</p></div>';head.append(button('Importar JSON','button outline',importProjectsJson,icons.file),button('Novo projeto','button primary',async()=>content.replaceChildren(await projectForm()),icons.plus));
   const tools=document.createElement('div');tools.className='admin-project-tools';tools.innerHTML='<input type="search" placeholder="Buscar projeto..."><select class="category-filter"><option value="">Todas as categorias</option></select><select class="status-filter"><option value="">Todos os status</option><option value="rascunho">Rascunhos</option><option value="publicado">Publicados</option><option value="arquivado">Arquivados</option><option value="lixeira">Lixeira</option></select><input class="date-filter" type="date">';categories.forEach(item=>tools.querySelector('.category-filter').add(new Option(item.nome,item.id)));
   const list=document.createElement('div');list.className='admin-project-list';const apply=()=>{const search=tools.querySelector('[type="search"]').value.toLowerCase(),category=tools.querySelector('.category-filter').value,status=tools.querySelector('.status-filter').value,date=tools.querySelector('.date-filter').value,selectedCategory=categories.find(item=>item.id===category);const filtered=projects.filter(item=>(!search||(item.nome||'').toLowerCase().includes(search))&&(!category||(item.categoriaId===category||(!item.categoriaId&&item.categoria===selectedCategory?.nome)))&&(!status||statusOf(item)===status)&&(!date||dateValue(item.criadoEm)===date));list.replaceChildren(...filtered.map(item=>projectRow(item,filtered)));if(!filtered.length){const empty=document.createElement('p');empty.className='admin-empty';empty.textContent='Nenhum projeto encontrado.';list.append(empty)}};tools.querySelectorAll('input,select').forEach(field=>field.addEventListener('input',apply));apply();section.append(head,tools,list);content.append(section);
 }
