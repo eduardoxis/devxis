@@ -26,7 +26,7 @@ service cloud.firestore {
         (!data.keys().hasAny(['links']) || (data.links is map && data.links.keys().hasOnly(['projeto','github','behance','outro']))) &&
         (!data.keys().hasAny(['seo']) || (data.seo is map && data.seo.keys().hasOnly(['titulo','descricao','imagem'])));
     }
-    function validCategorySettings(data) { return data.keys().hasOnly(['items','atualizadoEm']) && data.items is list && data.items.size() <= 30; }
+    function validCategorySettings(data) { return data.keys().hasOnly(['items','atualizadoEm']) && data.items is list && data.items.size() <= 80; }
 
     match /projects/{id} {
       // Compatibilidade temporária com projetos antigos que ainda não têm status.

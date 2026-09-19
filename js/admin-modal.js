@@ -31,16 +31,76 @@ const icons={
   arrows:svg('<path d="M8 7h11M15 3l4 4-4 4M16 17H5M9 13l-4 4 4 4"/>')
 };
 const defaultCategories=[
-  ['Landing page','landing-page','Páginas focadas em conversão.','layout','#087bff'],
-  ['Site institucional','site-institucional','Sites para apresentação de empresas.','building','#3268d8'],
-  ['Sistema web','sistema-web','Sistemas e painéis personalizados.','code','#6d35ef'],
-  ['Loja virtual','loja-virtual','Projetos de comércio eletrônico.','store','#ef2774'],
+  ['Landing page','landing-page','Página estratégica voltada para conversão.','layout','#087bff'],
+  ['Site institucional','site-institucional','Site para apresentação de empresas e serviços.','building','#3268d8'],
+  ['Sistema web','sistema-web','Sistema personalizado acessado pelo navegador.','code','#6d35ef'],
+  ['Loja virtual','loja-virtual','E-commerce completo com catálogo e checkout.','store','#ef2774'],
+  ['Dashboard / Painel Administrativo','dashboard-painel-administrativo','Métricas, gráficos, usuários, vendas e relatórios.','chart','#0f4c81'],
+  ['Sistema de Agendamento','sistema-de-agendamento','Agenda para serviços, clínicas, salões e consultórios.','calendar','#7c3aed'],
+  ['Sistema de Gestão','sistema-de-gestao','Clientes, equipe, estoque, financeiro e pedidos.','chart','#0ea5e9'],
+  ['CRM','crm','Gestão de clientes, contatos, oportunidades e vendas.','user','#10b981'],
+  ['ERP','erp','Sistema empresarial com módulos integrados.','grid','#0369a1'],
+  ['Marketplace','marketplace','Plataforma com múltiplos vendedores.','store','#ec4899'],
+  ['Catálogo Digital','catalogo-digital','Produtos e serviços sem checkout obrigatório.','image','#f97316'],
+  ['Cardápio Digital','cardapio-digital','Cardápio para restaurantes, lanchonetes e delivery.','layout','#ea580c'],
+  ['Portal / Plataforma de Conteúdo','portal-plataforma-de-conteudo','Notícias, artigos, revistas e informações.','file','#2563eb'],
+  ['Blog','blog','Publicação e gerenciamento de artigos.','file','#8b5cf6'],
+  ['Portfólio Profissional','portfolio-profissional','Portfólio para profissionais e criativos.','image','#db2777'],
+  ['Site para Restaurante','site-para-restaurante','Site institucional para restaurantes e gastronomia.','store','#dc2626'],
+  ['Site para Clínica','site-para-clinica','Site para clínicas, saúde e consultórios.','user','#14b8a6'],
+  ['Site para Barbearia / Salão','site-para-barbearia-salao','Site para barbearias, salões e beleza.','layout','#a855f7'],
+  ['Site para Imobiliária','site-para-imobiliaria','Site para imóveis, corretores e construtoras.','building','#0284c7'],
+  ['Site para Escola / Curso','site-para-escola-curso','Site para escolas, cursos e treinamentos.','file','#4f46e5'],
+  ['Site para Advocacia','site-para-advocacia','Site profissional para escritórios jurídicos.','building','#475569'],
+  ['Site para Igreja','site-para-igreja','Site para igrejas e comunidades.','building','#7c3aed'],
+  ['Site para Eventos','site-para-eventos','Site para eventos, ingressos e inscrições.','calendar','#e11d48'],
+  ['Plataforma Educacional / EAD','plataforma-educacional-ead','Aulas, módulos, progresso e certificados.','file','#6366f1'],
+  ['Área do Cliente','area-do-cliente','Boletos, documentos, pedidos e perfil.','user','#0891b2'],
+  ['Área de Membros','area-de-membros','Conteúdo exclusivo com login.','user','#8b5cf6'],
+  ['Sistema de Reservas','sistema-de-reservas','Reservas de hotéis, restaurantes, espaços e serviços.','calendar','#059669'],
+  ['Sistema de Delivery','sistema-de-delivery','Pedidos, entregas e acompanhamento em tempo real.','store','#f43f5e'],
+  ['Sistema de Pedidos','sistema-de-pedidos','Pedidos internos ou comerciais.','store','#f59e0b'],
+  ['Sistema de Orçamentos','sistema-de-orcamentos','Solicitações, propostas e acompanhamento comercial.','file','#0ea5e9'],
+  ['Sistema de Estoque','sistema-de-estoque','Controle de produtos, entradas e saídas.','grid','#16a34a'],
+  ['Sistema Financeiro','sistema-financeiro','Receitas, despesas, fluxo de caixa e relatórios.','chart','#15803d'],
+  ['Sistema de Atendimento / Tickets','sistema-de-atendimento-tickets','Chamados, SLA, filas e suporte ao cliente.','file','#0f766e'],
+  ['Sistema de RH','sistema-de-rh','Pessoas, vagas, documentos e processos de RH.','user','#be123c'],
+  ['Sistema Escolar','sistema-escolar','Alunos, turmas, notas e frequência.','file','#4f46e5'],
+  ['Sistema para Clínicas','sistema-para-clinicas','Pacientes, prontuários e agenda médica.','user','#06b6d4'],
+  ['Sistema para Academias','sistema-para-academias','Alunos, treinos, planos e presença.','chart','#9333ea'],
+  ['Sistema SaaS','sistema-saas','Software vendido por assinatura.','code','#2563eb'],
+  ['Aplicação PWA','aplicacao-pwa','Aplicação web com experiência de aplicativo.','code','#0ea5e9'],
+  ['Aplicativo Mobile','aplicativo-mobile','Aplicativo para Android e iOS.','layout','#ec4899'],
+  ['API / Backend','api-backend','APIs REST, integrações e serviços.','code','#334155'],
+  ['Integração de APIs','integracao-de-apis','Pagamentos, WhatsApp, mapas, IA e serviços externos.','arrows','#0f766e'],
+  ['Automação','automacao','Processos, notificações, relatórios e tarefas automáticas.','arrows','#f59e0b'],
+  ['Chatbot / Assistente com IA','chatbot-assistente-com-ia','Atendimento automatizado e assistentes inteligentes.','light','#7c3aed'],
+  ['Plataforma com Inteligência Artificial','plataforma-com-inteligencia-artificial','Soluções digitais baseadas em IA.','light','#2563eb'],
+  ['Sistema de Assinaturas','sistema-de-assinaturas','Planos recorrentes, cobrança e área do assinante.','chart','#0891b2'],
+  ['Plataforma de Cursos','plataforma-de-cursos','Venda e gestão de cursos online.','file','#4f46e5'],
+  ['Plataforma de Vagas','plataforma-de-vagas','Vagas, candidaturas e recrutamento.','user','#0284c7'],
+  ['Rede Social / Comunidade','rede-social-comunidade','Comunidades, perfis, publicações e interações.','user','#db2777'],
+  ['Página de Evento','pagina-de-evento','Divulgação e inscrição de eventos.','calendar','#e11d48'],
+  ['Página de Captura / Lead Page','pagina-de-captura-lead-page','Captação de leads com formulário estratégico.','layout','#0284c7'],
+  ['Página de Vendas','pagina-de-vendas','Página de venda para produtos, serviços ou cursos.','layout','#16a34a'],
+  ['Hotsite','hotsite','Site objetivo para uma campanha específica.','image','#f97316'],
+  ['One Page','one-page','Site completo em uma única página.','layout','#64748b'],
+  ['Redesign de Site','redesign-de-site','Modernização visual e estrutural de site existente.','edit','#0ea5e9'],
+  ['Projeto Full Stack','projeto-full-stack','Projeto completo de frontend, backend e banco de dados.','code','#1d4ed8'],
   ['Manutenção','manutencao','Evolução e suporte de projetos.','tools','#f59e0b'],
   ['Outro','outro','Outros tipos de trabalho.','grid','#64748b']
 ];
 let activeTab='overview';
 let categoryCache=[];
 let projectCache=[];
+const demoProjects=[
+  {seedKey:'nexus-gestao',nome:'Nexus Gestão',categoriaSlug:'sistema-de-gestao',descricaoCurta:'Sistema empresarial para centralizar vendas, estoque, clientes e financeiro em uma única visão.',descricaoCompleta:'O Nexus Gestão organiza a operação de pequenas e médias empresas com indicadores claros, controle de produtos, pedidos e relatórios financeiros.',cliente:'Nexus Solutions',ano:2026,tipoTrabalho:'Sistema de Gestão',tecnologias:['React','Node.js','Firebase','Chart.js'],destaque:true},
+  {seedKey:'agenda-pro',nome:'AgendaPro',categoriaSlug:'sistema-de-agendamento',descricaoCurta:'Plataforma de agendamentos para clínicas e negócios de serviços, com agenda inteligente e lembretes.',descricaoCompleta:'O AgendaPro reduz faltas e simplifica a rotina da equipe com agenda por profissional, cadastro de clientes, confirmação e relatórios.',cliente:'AgendaPro Saúde',ano:2026,tipoTrabalho:'Sistema de Agendamento',tecnologias:['JavaScript','Firebase','PWA','WhatsApp API'],destaque:true},
+  {seedKey:'atlas-crm',nome:'Atlas CRM',categoriaSlug:'crm',descricaoCurta:'CRM comercial com funil de oportunidades, contatos, atividades e previsão de vendas.',descricaoCompleta:'O Atlas CRM reúne a operação comercial em um ambiente orientado por dados para acompanhar oportunidades e acelerar decisões.',cliente:'Atlas Comercial',ano:2026,tipoTrabalho:'CRM de Vendas',tecnologias:['React','Firebase','Node.js','API REST'],destaque:true},
+  {seedKey:'mesa-facil',nome:'MesaFácil',categoriaSlug:'cardapio-digital',descricaoCurta:'Cardápio digital com pedidos, checkout e acompanhamento do preparo em tempo real.',descricaoCompleta:'O MesaFácil transforma o pedido do restaurante em uma experiência fluida, desde a escolha dos produtos até o acompanhamento da entrega.',cliente:'Casa do Sabor',ano:2026,tipoTrabalho:'Cardápio e Delivery',tecnologias:['JavaScript','PWA','Firebase','Mercado Pago'],destaque:false},
+  {seedKey:'eduflow',nome:'EduFlow',categoriaSlug:'plataforma-educacional-ead',descricaoCurta:'Plataforma EAD para cursos, aulas, progresso, certificados e acompanhamento de alunos.',descricaoCompleta:'O EduFlow cria uma jornada de aprendizado organizada para alunos e uma visão completa de gestão para professores e escolas.',cliente:'Instituto EduFlow',ano:2026,tipoTrabalho:'Plataforma Educacional',tecnologias:['React','Firebase','Video API','PWA'],destaque:false},
+  {seedKey:'atende-mais',nome:'Atende+',categoriaSlug:'sistema-de-atendimento-tickets',descricaoCurta:'Central de atendimento com tickets, SLA, automações, indicadores e canais integrados.',descricaoCompleta:'O Atende+ concentra conversas e chamados em uma operação rápida, com filas inteligentes e dados de satisfação em tempo real.',cliente:'Atende Mais',ano:2026,tipoTrabalho:'Sistema de Atendimento',tecnologias:['Node.js','Firebase','WhatsApp API','IA'],destaque:false}
+];
 
 function toast(message,type='success'){
   const element=$('#toast');
@@ -63,6 +123,7 @@ async function open(){
   modal.hidden=false;
   const user=auth?.currentUser;
   if(user&&await isAdmin(user)){
+    try{await ensureDemoProjects()}catch(error){console.error('demo_projects_seed_failed',error)}
     loginView.hidden=true;
     dashboardView.hidden=false;
     if(!content.childElementCount)setTab('overview');
@@ -96,11 +157,32 @@ function confirmAction({title,message,confirmLabel='Confirmar',danger=true,extra
 async function ensureCategories(){
   if(categoryCache.length)return categoryCache.sort((a,b)=>(a.ordem||0)-(b.ordem||0));
   const reference=doc(db,'settings','categories'),snapshot=await getDoc(reference);
-  if(snapshot.exists()&&Array.isArray(snapshot.data().items)){categoryCache=snapshot.data().items;return categoryCache.sort((a,b)=>(a.ordem||0)-(b.ordem||0))}
-  categoryCache=defaultCategories.map(([nome,slug,descricao,icone,cor],index)=>({id:`category-${slug}`,nome,slug,descricao,icone,cor,status:'ativa',ordem:index+1,criadoEm:new Date().toISOString()}));await setDoc(reference,{items:categoryCache,atualizadoEm:serverTimestamp()},{merge:true});
+  const defaults=defaultCategories.map(([nome,slug,descricao,icone,cor],index)=>({id:`category-${slug}`,nome,slug,descricao,icone,cor,status:'ativa',ordem:index+1,criadoEm:new Date().toISOString()}));
+  if(snapshot.exists()&&Array.isArray(snapshot.data().items)){
+    categoryCache=snapshot.data().items;
+    const existingSlugs=new Set(categoryCache.map(item=>item.slug));
+    const missing=defaults.filter(item=>!existingSlugs.has(item.slug));
+    if(missing.length){categoryCache=[...categoryCache,...missing];await setDoc(reference,{items:categoryCache,atualizadoEm:serverTimestamp()},{merge:true})}
+    return categoryCache.sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+  }
+  categoryCache=defaults;await setDoc(reference,{items:categoryCache,atualizadoEm:serverTimestamp()},{merge:true});
   return categoryCache.sort((a,b)=>(a.ordem||0)-(b.ordem||0));
 }
 async function loadProjects(){projectCache=await collectionItems('projects');return projectCache.sort((a,b)=>(a.ordem??999999)-(b.ordem??999999))}
+async function ensureDemoProjects(){
+  const [projects,categories]=await Promise.all([collectionItems('projects'),ensureCategories()]);
+  const existing=new Set(projects.map(item=>item.seedKey));
+  const missing=demoProjects.filter(item=>!existing.has(item.seedKey));
+  if(!missing.length)return;
+  const initialOrder=projects.length;
+  await Promise.all(missing.map((item,index)=>{
+    const category=categories.find(entry=>entry.slug===item.categoriaSlug);
+    const timestamp=serverTimestamp();
+    return addDoc(collection(db,'projects'),{
+      seedKey:item.seedKey,nome:item.nome,slug:slugify(item.nome),categoriaId:category?.id||'',categoria:category?.nome||'',descricaoCurta:item.descricaoCurta,descricaoCompleta:item.descricaoCompleta,status:'publicado',publicado:true,ordem:initialOrder+index+1,cliente:item.cliente,ano:item.ano,tipoTrabalho:item.tipoTrabalho,tecnologias:item.tecnologias,links:{projeto:'',github:'',behance:'',outro:''},seo:{titulo:item.nome,descricao:item.descricaoCurta,imagem:''},destaque:item.destaque,galeria:[],imagem:'',historico:[nowHistory('Projeto demonstrativo criado')],criadoEm:timestamp,atualizadoEm:timestamp,publicadoEm:timestamp
+    });
+  }));
+}
 
 function statusBadge(status){const badge=document.createElement('span');badge.className=`admin-status status-${status}`;badge.textContent=status[0].toUpperCase()+status.slice(1);return badge}
 function projectCover(project){const cover=project.galeria?.find(item=>item.capa)||project.galeria?.[0];return cover?.url||project.imagem||project.imagens?.[0]||''}
@@ -179,7 +261,7 @@ async function renderProjectsManager(){
 async function renderQuotes(){const quotes=(await collectionItems('quotes')).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));const section=document.createElement('section');section.className='admin-manager';section.innerHTML='<header><div><h3>Orçamentos</h3><p>Pedidos recebidos pelo formulário do site.</p></div></header>';const list=document.createElement('div');list.className='admin-simple-table';quotes.forEach(item=>{const row=document.createElement('article');const info=document.createElement('div');const name=document.createElement('b');name.textContent=item.nome||'Sem nome';const meta=document.createElement('span');meta.textContent=`${item.tipoSistema||'—'} · ${dateText(item.criadoEm)}`;info.append(name,meta);const select=document.createElement('select');['novo','em análise','contatado','aprovado','recusado','finalizado'].forEach(status=>select.add(new Option(status,status,status===item.status,status===item.status)));select.onchange=async()=>{await updateDoc(doc(db,'quotes',item.id),{status:select.value});toast('Status do orçamento atualizado.')};row.append(info,select);list.append(row)});section.append(list);content.append(section)}
 async function renderTab(){content.replaceChildren();if(activeTab==='overview')return renderOverview();if(activeTab==='projects')return renderProjectsManager();if(activeTab==='categories')return renderCategories();return renderQuotes()}
 
-async function showAdmin(user){if(!await isAdmin(user)){await signOut(auth);throw new Error('Esta conta não tem autorização para o painel.')}loginView.hidden=true;dashboardView.hidden=false;setTab('overview')}
+async function showAdmin(user){if(!await isAdmin(user)){await signOut(auth);throw new Error('Esta conta não tem autorização para o painel.')}try{await ensureDemoProjects()}catch(error){console.error('demo_projects_seed_failed',error)}loginView.hidden=true;dashboardView.hidden=false;setTab('overview')}
 const loginForm=$('#admin-login-form'),passwordInput=$('#admin-password'),passwordToggle=$('#toggle-admin-password');
 passwordToggle.addEventListener('click',()=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';passwordToggle.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');passwordToggle.setAttribute('aria-pressed',String(!showing));passwordInput.focus()});
 $('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Se existir uma conta associada, você receberá instruções de recuperação.')}catch{toast('Se existir uma conta associada, você receberá instruções de recuperação.')}});
