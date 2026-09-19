@@ -46,7 +46,9 @@ export default async function handler(request,response){
     return response.status(201).json({ok:true});
   }catch(error){
     const unavailable=error?.message==='Firebase Admin não configurado.'||error?.message==='Rate limit não configurado.';
-    console.error('quote_submission_failed',error?.code||error?.message||'unknown');
+    const credentialError=/credential|private key|invalid grant|unauthenticated|decoder|pem/i.test(`${error?.code||''} ${error?.message||''}`);
+    console.error('quote_submission_failed',{code:error?.code||'unknown',message:error?.message||'unknown'});
+    if(credentialError)return fail(response,503,'A conexão segura do formulário precisa ser revisada.');
     return fail(response,unavailable?503:500,unavailable?'O envio está temporariamente indisponível. Tente novamente em alguns minutos.':'Não foi possível registrar o pedido agora.');
   }
 }
