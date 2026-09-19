@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { adminDb } from './_firebase-admin.js';
+import { getAdminDb } from './_firebase-admin.js';
 
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_HITS = 4;
@@ -15,6 +15,7 @@ export function rateLimitKey(value) {
 
 // Persistente e transacional: funciona entre instâncias serverless e cold starts.
 export async function rateLimit(key, max = MAX_HITS, windowMs = WINDOW_MS) {
+  const adminDb = getAdminDb();
   const reference = adminDb.collection('rate_limits').doc(rateLimitKey(key));
   const now = Date.now();
   return adminDb.runTransaction(async transaction => {

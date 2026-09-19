@@ -1,4 +1,4 @@
-import {adminDb} from './_firebase-admin.js';
+import {getAdminDb} from './_firebase-admin.js';
 import {rateLimit} from './_rate-limit.js';
 
 export const config={api:{bodyParser:{sizeLimit:'16kb'}}};
@@ -42,7 +42,11 @@ export default async function handler(request,response){
   if(checked.error)return fail(response,400,checked.error);
   try{
     if(!await rateLimit(`${ipOf(request)}:${checked.quote.email}`))return fail(response,429,'Aguarde alguns minutos antes de enviar outro pedido.');
-    await adminDb.collection('quotes').add({...checked.quote,status:'novo',criadoEm:new Date(),origem:'site'});
+    await getAdminDb().collection('quotes').add({...checked.quote,status:'novo',criadoEm:new Date(),origem:'site'});
     return response.status(201).json({ok:true});
-  }catch(error){console.error('quote_submission_failed',error?.code||'unknown');return fail(response,500,'Não foi possível registrar o pedido agora.')}
+  }catch(error){
+    const unavailable=error?.message==='Firebase Admin não configurado.'||error?.message==='Rate limit não configurado.';
+    console.error('quote_submission_failed',error?.code||error?.message||'unknown');
+    return fail(response,unavailable?503:500,unavailable?'O envio está temporariamente indisponível. Tente novamente em alguns minutos.':'Não foi possível registrar o pedido agora.');
+  }
 }
