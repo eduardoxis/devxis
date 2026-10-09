@@ -5,8 +5,12 @@ const WINDOW_MS = 10 * 60 * 1000;
 const MAX_HITS = 4;
 
 function secret() {
-  if (!process.env.RATE_LIMIT_SECRET) throw new Error('Rate limit não configurado.');
-  return process.env.RATE_LIMIT_SECRET;
+  // A chave privada do Firebase é um segredo de servidor já obrigatório para
+  // esta rota. Ela mantém o limite protegido caso RATE_LIMIT_SECRET ainda não
+  // tenha sido criado no painel da Vercel.
+  const configured = process.env.RATE_LIMIT_SECRET || process.env.FIREBASE_PRIVATE_KEY;
+  if (!configured) throw new Error('Rate limit não configurado.');
+  return configured;
 }
 
 export function rateLimitKey(value) {

@@ -11,11 +11,26 @@ function cleanEnvironmentValue(value) {
   return cleaned;
 }
 
+function normalizePrivateKey(value) {
+  let key = cleanEnvironmentValue(value);
+  if (!key) return '';
+
+  // O painel da Vercel pode armazenar as quebras de linha como "\\n"
+  // ou como quebras reais. O Admin SDK exige sempre o formato real.
+  key = key.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n').replace(/\r\n/g, '\n');
+  return key.trim();
+}
+
 function credentials() {
   const projectId = cleanEnvironmentValue(process.env.FIREBASE_PROJECT_ID);
   const clientEmail = cleanEnvironmentValue(process.env.FIREBASE_CLIENT_EMAIL);
-  const privateKey = cleanEnvironmentValue(process.env.FIREBASE_PRIVATE_KEY).replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n');
+  const privateKey = normalizePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
   if (!projectId || !clientEmail || !privateKey) {
+    console.error('firebase_admin_environment_missing', {
+      projectId: Boolean(projectId),
+      clientEmail: Boolean(clientEmail),
+      privateKey: Boolean(privateKey),
+    });
     throw new Error('Firebase Admin não configurado.');
   }
 
