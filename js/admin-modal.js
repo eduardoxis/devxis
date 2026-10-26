@@ -1,5 +1,5 @@
 import {auth,db,firebaseReady} from '../firebase/firebase-config.js';
-import {signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import {signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail,createUserWithEmailAndPassword,sendEmailVerification} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import {doc,getDoc,setDoc,collection,getDocs,query,limit,addDoc,updateDoc,deleteDoc,deleteField,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {withLoading} from './utils/loading.js';
 import {compressImage} from './utils/image-compressor.js?v=gallery-advanced-1';
@@ -93,6 +93,7 @@ const defaultCategories=[
   ['Outro','outro','Outros tipos de trabalho.','grid','#64748b']
 ];
 let activeTab='overview';
+let loginMode='admin';
 let categoryCache=[];
 let projectCache=[];
 const demoProjects=[
@@ -121,8 +122,16 @@ const collectionItems=async(name,maxItems=200)=>{const snap=await getDocs(query(
 const button=(label,className,handler,icon='')=>{const item=document.createElement('button');item.type='button';item.className=className;item.innerHTML=`${icon}${label}`;item.onclick=handler;return item};
 
 function close(){modal.hidden=true}
-async function open(){
+async function open(mode='admin'){
+  loginMode=mode==='client'?'client':'admin';
+  $('#profile-dropdown').hidden=true;
+  $('#profile-menu').setAttribute('aria-expanded','false');
+  $('#admin-login-view > h2').textContent='Bem-vindo de volta.';
+  $('#admin-login-view > p').textContent=loginMode==='client'?'Entre para acompanhar seus projetos, propostas e entregas.':'Entre com uma conta autorizada para gerenciar seu portfólio.';
+  $('#admin-login-form [type="submit"]').textContent=loginMode==='client'?'Entrar':'Entrar no painel';
+  $('#client-register').hidden=loginMode!=='client';
   modal.hidden=false;
+  if(loginMode==='client'){dashboardView.hidden=true;loginView.hidden=false;$('#admin-login-form [name="email"]').focus();return;}
   const user=auth?.currentUser;
   if(user&&await isAdmin(user)){
 
@@ -134,8 +143,8 @@ async function open(){
   dashboardView.hidden=true;
   loginView.hidden=false;
 }
-$('#profile-menu').onclick=()=>{$('#profile-dropdown').hidden=!$('#profile-dropdown').hidden};
-$('#open-admin').onclick=()=>location.href='pages/portal.html';$('#footer-admin').onclick=open;$('#close-admin').onclick=close;
+$('#profile-menu').onclick=()=>open('client');
+$('#open-admin').onclick=()=>open('client');$('#footer-admin').onclick=open;$('#close-admin').onclick=close;
 modal.onclick=event=>{if(event.target===modal)close()};
 
 async function isAdmin(user){if(!user||!firebaseReady)return false;const record=await getDoc(doc(db,'users',user.uid));return record.exists()&&record.data().isAdmin===true}
@@ -311,6 +320,12 @@ async function showAdmin(user){if(!await isAdmin(user)){await signOut(auth);thro
 const loginForm=$('#admin-login-form'),passwordInput=$('#admin-password'),passwordToggle=$('#toggle-admin-password');
 passwordToggle.addEventListener('click',()=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';passwordToggle.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');passwordToggle.setAttribute('aria-pressed',String(!showing));passwordInput.focus()});
 $('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Se existir uma conta associada, você receberá instruções de recuperação.')}catch{toast('Se existir uma conta associada, você receberá instruções de recuperação.')}});
-loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');await showAdmin(result.user,true)}catch(error){if(location.hostname==='localhost')console.warn('admin_login_denied',error?.code||'unknown');toast('E-mail ou senha inválidos, ou conta sem acesso ao painel.','error')}finally{submit.disabled=false}});
+loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');if(loginMode==='client'){location.href='pages/portal.html'}else{await showAdmin(result.user,true)}}catch(error){if(location.hostname==='localhost')console.warn('admin_login_denied',error?.code||'unknown');toast(loginMode==='client'?'Confira o e-mail e a senha para entrar.':'E-mail ou senha inválidos, ou conta sem acesso ao painel.','error')}finally{submit.disabled=false}});
 $('#admin-logout').onclick=async()=>{await signOut(auth);dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren();toast('Sessão encerrada.')};
-if(firebaseReady)onAuthStateChanged(auth,async user=>{const login=$('#open-admin');login.hidden=false;if(user&&await isAdmin(user)){loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
+if(firebaseReady)onAuthStateChanged(auth,async user=>{const login=$('#open-admin');login.hidden=false;if(loginMode==='client'){dashboardView.hidden=true;loginView.hidden=false;return}if(user&&await isAdmin(user)){loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
+
+$('#client-register').onclick=async()=>{
+  if(!loginForm.reportValidity())return;
+  const register=$('#client-register'),submit=loginForm.querySelector('[type="submit"]');
+  try{register.disabled=true;submit.disabled=true;await setPersistence(auth,loginForm.elements.remember.checked?browserLocalPersistence:browserSessionPersistence);const result=await createUserWithEmailAndPassword(auth,loginForm.elements.email.value.trim(),loginForm.elements.password.value);await sendEmailVerification(result.user);location.href='pages/portal.html'}catch(error){toast(error.code==='auth/email-already-in-use'?'Este e-mail já possui uma conta. Entre ou recupere sua senha.':'Não foi possível concluir o cadastro. Confira os dados e tente novamente.','error')}finally{register.disabled=false;submit.disabled=false}
+};

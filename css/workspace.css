@@ -801,3 +801,5 @@
     break-inside: avoid;
   }
 }
+
+#client-register[hidden] { display: none !important; }
