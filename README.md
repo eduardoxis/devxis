@@ -2,6 +2,8 @@
 
 Site estático em HTML/CSS/JavaScript com Firebase Authentication, Firestore e API Serverless da Vercel.
 
+O modal administrativo agora também inclui propostas, projetos privados, etapas/tarefas, documentação UML versionada, aprovações, mensagens, anexos pequenos e portal do cliente. O portfólio público continua separado. Consulte [configuração, limites gratuitos, arquivos e testes da gestão](docs/gestao.md) antes de publicar as alterações.
+
 ## Segurança e configuração de produção
 
 ### Administradores

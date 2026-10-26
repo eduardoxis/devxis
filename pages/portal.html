@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DEVXIS | Portal do cliente</title>
+    <link rel="icon" href="../assets/images/logo-devxis.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/workspace.css" />
+  </head>
+  <body class="workspace-page">
+    <header class="ws-shell-header">
+      <a href="../index.html" class="brand"
+        ><img src="../assets/images/logo-devxis.png" alt="DEVXIS" /></a
+      ><a href="../index.html">← Voltar ao site</a
+      ><button id="portal-logout" class="ws-button" hidden>Sair</button>
+    </header>
+    <main class="ws-shell">
+      <section id="portal-auth" class="ws-auth">
+        <p class="eyebrow">DEVXIS • ÁREA DO CLIENTE</p>
+        <h1>Acompanhe seu projeto.</h1>
+        <p>Propostas, entregas e decisões em um só lugar.</p>
+        <form id="portal-login">
+          <label
+            >E-mail<input
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength="160" /></label
+          ><label
+            >Senha<input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              minlength="8"
+              required /></label
+          ><button class="ws-button primary" type="submit">Entrar</button
+          ><button class="ws-button" id="portal-register" type="button">
+            Criar conta</button
+          ><button class="ws-button" id="portal-reset" type="button">
+            Esqueci minha senha
+          </button>
+        </form>
+        <p id="portal-auth-message" role="status"></p>
+      </section>
+      <section id="portal-view" hidden>
+        <div id="portal-account"></div>
+        <nav
+          id="portal-tabs"
+          class="ws-tabs"
+          aria-label="Portal do cliente"
+        ></nav>
+        <div id="portal-content" class="ws-root"></div>
+      </section>
+    </main>
+    <div id="toast" role="status"></div>
+    <script type="module" src="../js/client/portal.js"></script>
+  </body>
+</html>

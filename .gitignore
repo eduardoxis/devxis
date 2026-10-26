@@ -1,3 +1,13 @@
 .firebase/
 firebase-debug.log
 .env
+.env*
+!.env.example
+node_modules/
+.vercel/
+.env.*.local
+work/
+test-results/
+public/
+js/vendor/
+*-debug.log

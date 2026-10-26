@@ -41,6 +41,11 @@ function credentials() {
   });
 }
 function getAdminApp() {
+  if(process.env.FIRESTORE_EMULATOR_HOST||process.env.FIREBASE_AUTH_EMULATOR_HOST){
+    const projectId=process.env.FIREBASE_PROJECT_ID;
+    if(process.env.NODE_ENV==='production'||!process.env.FIRESTORE_EMULATOR_HOST||!process.env.FIREBASE_AUTH_EMULATOR_HOST||!projectId?.startsWith('demo-'))throw new Error('Configure ambos os emuladores com um projeto demo- fora de produção.');
+    return getApps()[0]||initializeApp({projectId});
+  }
   return getApps()[0] || initializeApp({ credential: credentials() });
 }
 

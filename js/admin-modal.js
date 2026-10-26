@@ -4,6 +4,8 @@ import {doc,getDoc,setDoc,collection,getDocs,query,limit,addDoc,updateDoc,delete
 import {withLoading} from './utils/loading.js';
 import {compressImage} from './utils/image-compressor.js?v=gallery-advanced-1';
 
+import {renderWorkspaceAdmin} from './admin/workspace-admin.js';
+
 const $=selector=>document.querySelector(selector);
 const modal=$('#admin-modal');
 const loginView=$('#admin-login-view');
@@ -123,7 +125,7 @@ async function open(){
   modal.hidden=false;
   const user=auth?.currentUser;
   if(user&&await isAdmin(user)){
-    try{await ensureDemoProjects()}catch(error){console.error('demo_projects_seed_failed',error)}
+
     loginView.hidden=true;
     dashboardView.hidden=false;
     if(!content.childElementCount)setTab('overview');
@@ -133,7 +135,7 @@ async function open(){
   loginView.hidden=false;
 }
 $('#profile-menu').onclick=()=>{$('#profile-dropdown').hidden=!$('#profile-dropdown').hidden};
-$('#open-admin').onclick=open;$('#footer-admin').onclick=open;$('#admin-access').onclick=open;$('#close-admin').onclick=close;
+$('#open-admin').onclick=()=>location.href='pages/portal.html';$('#footer-admin').onclick=open;$('#admin-access').onclick=open;$('#close-admin').onclick=close;
 modal.onclick=event=>{if(event.target===modal)close()};
 
 async function isAdmin(user){if(!user||!firebaseReady)return false;const record=await getDoc(doc(db,'users',user.uid));return record.exists()&&record.data().isAdmin===true}
@@ -303,12 +305,14 @@ async function renderProjectsManager(){
 }
 
 async function renderQuotes(){const quotes=(await collectionItems('quotes')).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));const section=document.createElement('section');section.className='admin-manager';section.innerHTML='<header><div><h3>Orçamentos</h3><p>Pedidos recebidos pelo formulário do site.</p></div></header>';const list=document.createElement('div');list.className='admin-simple-table';quotes.forEach(item=>{const row=document.createElement('article');const info=document.createElement('div');const name=document.createElement('b');name.textContent=item.nome||'Sem nome';const meta=document.createElement('span');meta.textContent=`${item.tipoSistema||'—'} · ${dateText(item.criadoEm)}`;info.append(name,meta);const select=document.createElement('select');['novo','em análise','contatado','aprovado','recusado','finalizado'].forEach(status=>select.add(new Option(status,status,status===item.status,status===item.status)));select.onchange=async()=>{await updateDoc(doc(db,'quotes',item.id),{status:select.value});toast('Status do orçamento atualizado.')};row.append(info,select);list.append(row)});section.append(list);content.append(section)}
-async function renderTab(){content.replaceChildren();if(activeTab==='overview')return renderOverview();if(activeTab==='projects')return renderProjectsManager();if(activeTab==='categories')return renderCategories();return renderQuotes()}
+async function renderTab(){content.replaceChildren();content.classList.remove('ws-root');content.closest('.admin-modal-box')?.classList.remove('ws-expanded');if(!['projects','categories'].includes(activeTab))return renderWorkspaceAdmin(content,activeTab);if(activeTab==='projects')return renderProjectsManager();if(activeTab==='categories')return renderCategories();return renderQuotes()}
 
-async function showAdmin(user){if(!await isAdmin(user)){await signOut(auth);throw new Error('Esta conta não tem autorização para o painel.')}try{await ensureDemoProjects()}catch(error){console.error('demo_projects_seed_failed',error)}loginView.hidden=true;dashboardView.hidden=false;setTab('overview')}
+async function showAdmin(user){if(!await isAdmin(user)){await signOut(auth);throw new Error('Esta conta não tem autorização para o painel.')}loginView.hidden=true;dashboardView.hidden=false;setTab('overview')}
 const loginForm=$('#admin-login-form'),passwordInput=$('#admin-password'),passwordToggle=$('#toggle-admin-password');
 passwordToggle.addEventListener('click',()=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';passwordToggle.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');passwordToggle.setAttribute('aria-pressed',String(!showing));passwordInput.focus()});
 $('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Se existir uma conta associada, você receberá instruções de recuperação.')}catch{toast('Se existir uma conta associada, você receberá instruções de recuperação.')}});
 loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');await showAdmin(result.user,true)}catch(error){if(location.hostname==='localhost')console.warn('admin_login_denied',error?.code||'unknown');toast('E-mail ou senha inválidos, ou conta sem acesso ao painel.','error')}finally{submit.disabled=false}});
 $('#admin-logout').onclick=async()=>{await signOut(auth);dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren();toast('Sessão encerrada.')};
 if(firebaseReady)onAuthStateChanged(auth,async user=>{const access=$('#admin-access'),login=$('#open-admin');access.hidden=true;login.hidden=false;if(user&&await isAdmin(user)){access.hidden=false;login.hidden=true;loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
+
+if(location.hash==='#administracao')open().catch(error=>toast(error.message,'error'));

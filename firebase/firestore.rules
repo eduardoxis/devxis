@@ -38,16 +38,24 @@ service cloud.firestore {
     }
     match /quotes/{id} {
       // Criação é exclusivamente pela API com Admin SDK; orçamento nunca é público.
-      allow get, list, create, delete: if admin();
-      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','atualizadoEm']);
+      allow get, list: if admin();
+      allow create, update, delete: if false;
+      match /{document=**} { allow read, write: if false; }
     }
     match /testimonials/{id} { allow get, list: if admin() || resource.data.publicado == true; allow create, update, delete: if admin(); }
     match /technologies/{id} { allow get, list: if admin() || resource.data.publicado == true; allow create, update, delete: if admin(); }
     match /profile/public { allow get: if true; allow create, update, delete: if admin(); }
     match /profile/{id} { allow read, write: if admin(); }
     match /settings/categories { allow read: if admin(); allow create, update: if admin() && validCategorySettings(request.resource.data); allow delete: if admin(); }
-    match /settings/{id} { allow read, write: if admin(); }
+    match /settings/workspace { allow read: if admin(); allow write: if false; }
+    match /settings/{id} { allow read, write: if id != 'workspace' && admin(); }
     match /users/{id} { allow get: if signedIn() && request.auth.uid == id; allow list: if admin(); allow create, update, delete: if false; }
     match /rate_limits/{id} { allow read, write: if false; }
+    // Dados privados passam exclusivamente pela API autenticada. O Admin SDK
+    // valida o vínculo ao cliente e a visibilidade de cada documento no servidor.
+    match /client_projects/{id}/{document=**} { allow read, write: if false; }
+    match /clients/{id} { allow read, write: if false; }
+    match /notifications/{id} { allow read, write: if false; }
+    match /activity_logs/{id} { allow read, write: if false; }
   }
 }

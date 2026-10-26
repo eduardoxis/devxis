@@ -42,7 +42,11 @@ export default async function handler(request,response){
   if(checked.error)return fail(response,400,checked.error);
   try{
     if(!await rateLimit(`${ipOf(request)}:${checked.quote.email}`))return fail(response,429,'Aguarde alguns minutos antes de enviar outro pedido.');
-    await getAdminDb().collection('quotes').add({...checked.quote,status:'novo',criadoEm:new Date(),origem:'site'});
+    const db=getAdminDb(),reference=db.collection('quotes').doc(),batch=db.batch(),createdAt=new Date().toISOString();
+    batch.create(reference,{...checked.quote,status:'novo',criadoEm:new Date(),createdAt,updatedAt:createdAt,revision:1,origem:'site'});
+    batch.create(db.collection('notifications').doc(),{recipient:'admin',projectId:'',title:`Novo orçamento: ${checked.quote.nome}`,kind:'quote',relatedId:reference.id,readAt:null,createdAt});
+    batch.create(db.collection('activity_logs').doc(),{projectId:'',action:'Novo orçamento recebido',details:reference.id,shared:false,actorUid:'public',actorName:checked.quote.nome,createdAt});
+    await batch.commit();
     return response.status(201).json({ok:true});
   }catch(error){
     const unavailable=error?.message==='Firebase Admin não configurado.'||error?.message==='Rate limit não configurado.';

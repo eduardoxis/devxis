@@ -1,1 +1,36 @@
-{"firestore":{"rules":"firebase/firestore.rules","indexes":"firebase/firestore.indexes.json"},"hosting":{"public":".","ignore":["firebase.json","**/.*","**/node_modules/**"]}}
+{
+  "firestore": {
+    "rules": "firebase/firestore.rules",
+    "indexes": "firebase/firestore.indexes.json"
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "server/**",
+      "tests/**",
+      "scripts/**",
+      "api/**",
+      "package*.json",
+      "pnpm*.yaml",
+      "README.md",
+      "docs/**"
+    ]
+  },
+  "emulators": {
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8080
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}
