@@ -104,19 +104,8 @@ async function start(user) {
     session = await api("session", "get");
     preview = session.admin && params.get("preview") === "1";
     if (session.admin && !preview) {
-      account.append(
-        heading(
-          "Acesso administrativo",
-          session.email,
-          button(
-            "Abrir painel administrativo",
-            () => (location.href = "../index.html#administracao"),
-          ),
-        ),
-      );
-      root.replaceChildren(
-        empty("O painel administrativo está no modal do site."),
-      );
+      account.append(heading('Área do cliente',session.email));
+      root.replaceChildren(empty('Esta é uma conta administrativa. Para acessar a administração, use o link no rodapé do site.'));
       return;
     }
     if (preview) {
@@ -133,7 +122,7 @@ async function start(user) {
         root,
         params.get("project"),
         false,
-        () => (location.href = "../index.html#administracao"),
+        () => (location.href = "../index.html"),
         "Visão geral",
         true,
       );
