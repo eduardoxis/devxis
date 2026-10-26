@@ -1,5 +1,6 @@
+import {openRegistration} from './client/registration-modal.js';
 import {auth,db,firebaseReady} from '../firebase/firebase-config.js';
-import {signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail,createUserWithEmailAndPassword,sendEmailVerification} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import {signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence,browserSessionPersistence,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import {doc,getDoc,setDoc,collection,getDocs,query,limit,addDoc,updateDoc,deleteDoc,deleteField,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import {withLoading} from './utils/loading.js';
 import {compressImage} from './utils/image-compressor.js?v=gallery-advanced-1';
@@ -124,6 +125,7 @@ const button=(label,className,handler,icon='')=>{const item=document.createEleme
 function close(){modal.hidden=true}
 async function open(mode='admin'){
   loginMode=mode==='client'?'client':'admin';
+  const notice=$('#client-login-notice');if(notice)notice.hidden=true;
   $('#profile-dropdown').hidden=true;
   $('#profile-menu').setAttribute('aria-expanded','false');
   $('#admin-login-view > h2').textContent='Bem-vindo de volta.';
@@ -324,8 +326,13 @@ loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!fir
 $('#admin-logout').onclick=async()=>{await signOut(auth);dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren();toast('Sessão encerrada.')};
 if(firebaseReady)onAuthStateChanged(auth,async user=>{const login=$('#open-admin');login.hidden=false;if(loginMode==='client'){dashboardView.hidden=true;loginView.hidden=false;return}if(user&&await isAdmin(user)){loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
 
-$('#client-register').onclick=async()=>{
-  if(!loginForm.reportValidity())return;
-  const register=$('#client-register'),submit=loginForm.querySelector('[type="submit"]');
-  try{register.disabled=true;submit.disabled=true;await setPersistence(auth,loginForm.elements.remember.checked?browserLocalPersistence:browserSessionPersistence);const result=await createUserWithEmailAndPassword(auth,loginForm.elements.email.value.trim(),loginForm.elements.password.value);await sendEmailVerification(result.user);location.href='pages/portal.html'}catch(error){toast(error.code==='auth/email-already-in-use'?'Este e-mail já possui uma conta. Entre ou recupere sua senha.':'Não foi possível concluir o cadastro. Confira os dados e tente novamente.','error')}finally{register.disabled=false;submit.disabled=false}
+$('#client-register').onclick=()=>{
+  modal.hidden=true;
+  openRegistration({auth,email:loginForm.elements.email.value.trim(),onCancel:()=>open('client'),onCreated:async({email,verificationSent})=>{
+    await open('client');
+    loginForm.elements.email.value=email;loginForm.elements.password.value='';
+    let notice=$('#client-login-notice');if(!notice){notice=document.createElement('p');notice.id='client-login-notice';notice.className='client-auth-notice';notice.setAttribute('role','status');loginForm.before(notice)}
+    notice.hidden=false;notice.textContent=verificationSent?'Conta criada! Confirme seu e-mail e entre com sua senha.':'Conta criada! Entre com sua senha; você poderá reenviar a confirmação de e-mail no portal.';
+    passwordInput.focus();
+  }});
 };

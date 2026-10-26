@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const {chromium}=process.env.PLAYWRIGHT_MODULE_PATH?require(process.env.PLAYWRIGHT_MODULE_PATH):await import('playwright');
+const browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
+try{
+  const page=await browser.newPage();
+  await page.goto('http://127.0.0.1:3000/?emulator=1',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>typeof document.querySelector('#profile-menu').onclick==='function');
+  await page.locator('#profile-menu').click();
+  const login=page.locator('#admin-login-form [type=submit]'),register=page.locator('#client-register');
+  const a=await login.boundingBox(),b=await register.boundingBox();assert(b.y>=a.y+a.height+10,'Botões devem ter espaço entre eles.');
+  await register.click();await page.locator('#client-registration-modal').waitFor();assert(await page.locator('#admin-modal').isHidden());
+  const email=`cadastro-${Date.now()}@example.test`,password='SenhaDeTeste2026!';
+  await page.locator('#client-registration-form [name=email]').fill(email);
+  await page.locator('#client-registration-form [name=password]').fill(password);
+  await page.locator('#client-registration-form [name=confirmPassword]').fill('OutraSenha2026!');
+  await page.locator('#client-registration-form [type=submit]').click();
+  assert(await page.locator('#client-registration-form [name=confirmPassword]').evaluate(input=>!input.checkValidity()));
+  assert(await page.locator('#client-registration-modal').isVisible());
+  await page.locator('#client-registration-form [name=confirmPassword]').fill(password);
+  await page.locator('#client-registration-form [type=submit]').click();
+  await page.locator('#client-login-notice:not([hidden])').waitFor({timeout:45000});
+  assert.equal(await page.locator('#client-registration-modal').count(),0);
+  assert.equal(await page.locator('#admin-login-form [name=email]').inputValue(),email);
+  assert.equal(await page.locator('#admin-login-form [name=password]').inputValue(),'');
+  assert(await page.evaluate(async()=>{const {auth}=await import('/firebase/firebase-config.js');return auth.currentUser===null}));
+  assert(page.url().includes('/?emulator=1'));
+  await page.locator('#admin-login-form [name=password]').fill(password);
+  await login.click();await page.waitForURL('**/pages/portal.html',{timeout:45000});
+  console.log('OK: espaçamento, modal separado, senhas diferentes recusadas, cadastro no Auth Emulator, retorno ao login sem sessão e entrada manual.');
+}finally{await browser.close()}

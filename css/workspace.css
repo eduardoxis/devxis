@@ -803,3 +803,16 @@
 }
 
 #client-register[hidden] { display: none !important; }
+#admin-login-form > #client-register { margin-top: 12px; }
+.client-registration-box { width:min(480px,calc(100vw - 32px));min-height:0;max-height:calc(100dvh - 32px);padding:28px 26px; }
+.client-registration-box h2 { margin:18px 0 6px;color:#071832;font-family:var(--font-head);font-size:28px; }
+.client-registration-box > p { margin:0 0 22px;color:#66738b;font-size:13px; }
+#client-registration-form { display:grid;gap:16px; }
+#client-registration-form label { display:grid;gap:7px;color:#071832;font-size:13px;font-weight:600; }
+#client-registration-form input { width:100%;padding:12px;border:1px solid #dce8f8;border-radius:9px;background:#f7faff;font:inherit; }
+#client-registration-form small { color:#66738b;font-size:11px;font-weight:400; }
+.client-registration-actions { display:grid;gap:12px; }
+.client-registration-error { margin:0;color:#b4233a;font-size:12px; }
+.client-registration-error:empty { display:none; }
+.client-auth-notice { padding:12px;border:1px solid #b6dfc9;border-radius:9px;background:#edf9f2;color:#176840;font-size:12px; }
+.client-auth-notice[hidden] { display:none!important; }
