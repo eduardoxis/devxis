@@ -43,6 +43,127 @@ function setup() {
   const other = { ...client, uid: "other" };
   return { db, admin, client, other };
 }
+test("indicadores do portal contam somente os registros do cliente e atualizam leitura", async () => {
+  const { db, admin, client, other } = setup();
+  db.seed("client_projects/own", {
+    clientUid: client.uid,
+    status: "Em desenvolvimento",
+  });
+  db.seed("client_projects/done", {
+    clientUid: client.uid,
+    status: "Concluído",
+  });
+  db.seed("client_projects/foreign", {
+    clientUid: other.uid,
+    status: "Em desenvolvimento",
+  });
+  db.seed("quotes/own", { clientUid: client.uid, status: "novo" });
+  db.seed("quotes/foreign", { clientUid: other.uid, status: "novo" });
+  db.seed("client_projects/own/approvals/a", {
+    clientUid: client.uid,
+    status: "pendente",
+  });
+  db.seed("client_projects/foreign/approvals/a", {
+    clientUid: other.uid,
+    status: "pendente",
+  });
+  db.seed("client_projects/own/messages/visible", {
+    visible: true,
+    authorRole: "Administrador",
+    authorUid: admin.uid,
+    readAt: null,
+    createdAt: "2026-10-27T10:00:00Z",
+  });
+  db.seed("client_projects/own/messages/private", {
+    visible: false,
+    authorRole: "Administrador",
+    readAt: null,
+  });
+  db.seed("client_projects/own/messages/fromClient", {
+    visible: true,
+    authorRole: "Cliente",
+    readAt: null,
+  });
+  db.seed("client_projects/foreign/messages/a", {
+    visible: true,
+    authorRole: "Administrador",
+    readAt: null,
+  });
+  db.seed("notifications/own", { recipient: client.uid, readAt: null });
+  db.seed("notifications/foreign", { recipient: other.uid, readAt: null });
+  const values = await dispatch(client, "client-dashboard", "get");
+  assert.equal(values.activeProjects, 1);
+  assert.equal(values.quotes, 1);
+  assert.equal(values.pendingApprovals, 1);
+  assert.equal(values.unreadMessages, 1);
+  assert.equal(values.unreadNotifications, 1);
+  await dispatch(client, "messages", "read", {
+    projectId: "own",
+    id: "visible",
+  });
+  assert.equal(
+    (await dispatch(client, "client-dashboard", "get")).unreadMessages,
+    0,
+  );
+  await assert.rejects(
+    () => dispatch(admin, "client-dashboard", "get"),
+    /cliente/,
+  );
+});
+test("busca de projetos é paginada, ignora acentos e não pesquisa dados privados ou de terceiros", async () => {
+  const { db, client, other } = setup();
+  for (let index = 0; index < 30; index++)
+    db.seed(`client_projects/p${String(index).padStart(3, "0")}`, {
+      name: index < 20 ? "Oficina de veículos" : "Loja virtual",
+      clientUid: client.uid,
+      clientName: "Empresa",
+      scope: "Atendimento",
+      internalNotes: "segredo",
+    });
+  db.seed("client_projects/foreign", {
+    name: "Oficina de veículos",
+    clientUid: other.uid,
+    scope: "Atendimento",
+  });
+  const first = await dispatch(
+    client,
+    "projects",
+    "search",
+    {},
+    { search: "veiculos", limit: 12 },
+  );
+  assert.equal(first.items.length, 12);
+  assert(first.nextCursor);
+  assert(
+    first.items.every(
+      (project) =>
+        project.clientUid === client.uid && project.internalNotes === undefined,
+    ),
+  );
+  const second = await dispatch(
+    client,
+    "projects",
+    "search",
+    {},
+    { search: "veiculos", limit: 12, cursor: first.nextCursor },
+  );
+  assert.equal(second.items.length, 8);
+  assert.equal(second.nextCursor, null);
+  assert(
+    !second.items.some((project) =>
+      first.items.some((item) => item.id === project.id),
+    ),
+  );
+  const empty = await dispatch(
+    client,
+    "projects",
+    "search",
+    {},
+    { search: "segredo" },
+  );
+  assert.equal(empty.items.length, 0);
+  assert.equal(empty.nextCursor, null);
+});
 test("cadastro salva contato e interesse sem permitir privilégios ou dados de terceiros", async () => {
   const { admin, client, other } = setup();
   const profile = await dispatch(client, "profile", "save", {

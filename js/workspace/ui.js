@@ -246,6 +246,7 @@ export async function pagedList(root, fetchPage, render) {
   let cursor = null,
     first = true;
   const more = button("Carregar mais", load);
+  more.hidden=true;
   async function load() {
     try {
       const result = await fetchPage(cursor);

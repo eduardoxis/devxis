@@ -1,4 +1,6 @@
 import { initializeSiteNavigation } from "../utils/site-navigation.js";
+import { setHeaderControl } from "../utils/header-controls.js";
+import { openHeaderNotifications } from "../utils/header-notifications.js";
 
 // Reutiliza o próprio cabeçalho público; não cria um segundo modelo de menu.
 export function mountAdminSiteHeader({ dashboard, closeModal, logout }) {
@@ -9,18 +11,35 @@ export function mountAdminSiteHeader({ dashboard, closeModal, logout }) {
   root.className = "admin-site-navigation";
   const header = source.cloneNode(true);
   header.id = "admin-site-header";
+  header.classList.add("panel-site-header");
   const profile = header.querySelector(".profile-area");
   profile.replaceChildren();
   const account = document.createElement("button");
   account.type = "button";
-  account.className = "profile-button";
-  account.textContent = "Minha conta";
+  account.className = "portal-header-button portal-account-button";
+  setHeaderControl(account, "user", "Minha conta");
   account.setAttribute("aria-label", "Abrir minha conta");
   account.onclick = () => {
     closeModal();
     location.href = "pages/portal.html";
   };
-  profile.append(account, logout);
+  const bell = document.createElement("button");
+  bell.type = "button";
+  bell.className = "portal-header-button portal-bell";
+  bell.setAttribute("aria-label", "Notificações");
+  setHeaderControl(bell, "bell", "Notificações");
+  bell.onclick = openHeaderNotifications;
+  const exit = document.createElement("button");
+  exit.type = "button";
+  exit.className = "portal-header-button portal-panel-exit";
+  setHeaderControl(exit, "home", "Sair do painel");
+  exit.onclick = () => {
+    closeModal();
+    location.hash = "inicio";
+  };
+  logout.className = "portal-header-button portal-account-exit";
+  setHeaderControl(logout, "logout", "Sair da conta");
+  profile.append(bell, account, exit, logout);
   const drawer = document.querySelector("#mobile-drawer").cloneNode(true),
     backdrop = document.querySelector("#mobile-menu-backdrop").cloneNode(true);
   drawer.id = "admin-site-mobile-drawer";

@@ -1,3 +1,5 @@
+import {updateHeaderSession} from './utils/header-controls.js';
+import {openHeaderNotifications} from './utils/header-notifications.js';
 import {mountAdminSiteHeader} from './admin/site-header.js';
 import {openRegistration} from './client/registration-modal.js';
 import {auth,db,firebaseReady} from '../firebase/firebase-config.js';
@@ -327,8 +329,8 @@ const loginForm=$('#admin-login-form'),passwordInput=$('#admin-password'),passwo
 passwordToggle.addEventListener('click',()=>{const showing=passwordInput.type==='text';passwordInput.type=showing?'password':'text';passwordToggle.setAttribute('aria-label',showing?'Mostrar senha':'Ocultar senha');passwordToggle.setAttribute('aria-pressed',String(!showing));passwordInput.focus()});
 $('#admin-forgot-password').addEventListener('click',async()=>{const email=loginForm.email.value.trim();if(!email)return toast('Digite seu e-mail para recuperar a senha.','error');try{await sendPasswordResetEmail(auth,email);toast('Se existir uma conta associada, você receberá instruções de recuperação.')}catch{toast('Se existir uma conta associada, você receberá instruções de recuperação.')}});
 loginForm.addEventListener('submit',async event=>{event.preventDefault();if(!firebaseReady)return toast('Configure o Firebase antes de entrar.','error');const form=event.currentTarget;const submit=form.querySelector('[type="submit"]');const email=form.elements.email.value.trim();const password=form.elements.password.value;const remember=form.elements.remember.checked;if(!email||!password)return toast('Preencha e-mail e senha para entrar.','error');try{submit.disabled=true;await setPersistence(auth,remember?browserLocalPersistence:browserSessionPersistence);const result=await withLoading(()=>signInWithEmailAndPassword(auth,email,password),'Validando acesso…');if(loginMode==='client'){location.href='pages/portal.html'}else{await showAdmin(result.user,true)}}catch(error){if(location.hostname==='localhost')console.warn('admin_login_denied',error?.code||'unknown');toast(loginMode==='client'?'Confira o e-mail e a senha para entrar.':'E-mail ou senha inválidos, ou conta sem acesso ao painel.','error')}finally{submit.disabled=false}});
-$('#admin-logout').onclick=async()=>{await signOut(auth);dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren();toast('Sessão encerrada.')};
-if(firebaseReady)onAuthStateChanged(auth,async user=>{const login=$('#open-admin');login.hidden=false;$('#profile-menu').textContent=user?'Minha conta':'Entrar';$('#profile-menu').setAttribute('aria-label',user?'Abrir minha conta':'Entrar na minha conta');if(loginMode==='client'){dashboardView.hidden=true;loginView.hidden=false;return}if(user&&await isAdmin(user)){loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
+$('#admin-logout').onclick=async()=>{await signOut(auth);close();content.replaceChildren();location.href='index.html?login=1'};
+if(firebaseReady)onAuthStateChanged(auth,async user=>{const login=$('#open-admin');login.hidden=false;updateHeaderSession(user);$('#profile-menu').setAttribute('aria-label',user?'Abrir minha conta':'Entrar na minha conta');if(loginMode==='client'){dashboardView.hidden=true;loginView.hidden=false;return}if(user&&await isAdmin(user)){loginView.hidden=true;dashboardView.hidden=false;return}dashboardView.hidden=true;loginView.hidden=false;content.replaceChildren()});
 
 $('#client-register').onclick=()=>{
   modal.hidden=true;
@@ -342,3 +344,8 @@ $('#client-register').onclick=()=>{
 };
 
 adminSiteNavigation=mountAdminSiteHeader({dashboard:dashboardView,closeModal:close,logout:$('#admin-logout')});
+
+if(new URLSearchParams(location.search).get('login')==='1')auth?.authStateReady().then(()=>{if(!auth.currentUser)open('client')});
+
+$('#header-notifications').onclick=openHeaderNotifications;
+$('#header-logout').onclick=async()=>{try{await signOut(auth);close();location.href='index.html?login=1'}catch{toast('Não foi possível sair. Tente novamente.','error')}};

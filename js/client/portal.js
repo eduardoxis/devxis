@@ -1,3 +1,13 @@
+import { portalIcon } from "./portal-icons.js";
+import {
+  buildWelcome,
+  buildPortalTabs,
+  selectPortalTab,
+  buildMetrics,
+  projectEmpty,
+  projectCard,
+  showAccount,
+} from "./portal-dashboard.js";
 import { initializeSiteNavigation } from "../utils/site-navigation.js";
 import { openRegistration } from "./registration-modal.js";
 import { auth } from "../../firebase/firebase-config.js";
@@ -38,17 +48,60 @@ const authView = document.querySelector("#portal-auth"),
   message = document.querySelector("#portal-auth-message"),
   logout = document.querySelector("#portal-logout");
 initializeSiteNavigation();
-document.querySelector("#profile-menu").onclick = () => {
-  const target = auth.currentUser
-    ? document.querySelector("#portal-account")
-    : authView;
-  target.scrollIntoView({ behavior: "smooth", block: "start" });
-  if (!auth.currentUser) form.elements.email.focus();
-};
 let session,
   active = "Meu painel",
   preview = false;
 const params = new URLSearchParams(location.search);
+const metricsRoot = document.querySelector("#portal-metrics"),
+  summaryError = document.querySelector("#portal-summary-error"),
+  bell = document.querySelector("#portal-notifications"),
+  exitPanel = document.querySelector("#portal-exit"),
+  profileButton = document.querySelector("#profile-menu");
+let profile = null,
+  metrics = null,
+  stopClock = () => {},
+  bootstrap = 0,
+  summaryVersion = 0,
+  projectSearch = "";
+const label = (node, icon, text) =>
+  node.replaceChildren(portalIcon(icon), el("span", { text }));
+label(logout, "logout", "Sair da conta");
+label(exitPanel, "home", "Sair do painel");
+label(bell, "bell", "Notificações");
+const alertDot = el("i", { class: "portal-alert-dot", hidden: true });
+bell.append(alertDot);
+profileButton.onclick = async () => {
+  if (!auth.currentUser) {
+    authView.scrollIntoView({ behavior: "smooth" });
+    form.elements.email.focus();
+    return;
+  }
+  try {
+    profile = profile || (await api("profile", "get"));
+    await showAccount(profile, (saved) => {
+      profile = saved;
+      if (session && !session.admin) welcome();
+    });
+  } catch (error) {
+    say(error.message);
+  }
+};
+bell.onclick = () => navigate("Notificações");
+function welcome() {
+  stopClock();
+  const rawName =
+    profile?.name ||
+    auth.currentUser?.displayName ||
+    (session?.name && !session.name.includes("@")
+      ? session.name
+      : session?.email?.split("@")[0]) ||
+    "cliente";
+  stopClock = buildWelcome(account, rawName);
+}
+window.addEventListener("pagehide", () => stopClock());
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted && session && !session.admin) welcome();
+});
 const credentials = () => ({
   email: form.elements.email.value.trim(),
   password: form.elements.password.value,
@@ -111,13 +164,36 @@ document.querySelector("#portal-reset").onclick = () =>
     message.textContent =
       "Se existir uma conta associada, você receberá as instruções.";
   });
-logout.onclick = () => signOut(auth);
+logout.onclick = async () => {
+  logout.disabled = true;
+  try {
+    await signOut(auth);
+    location.replace("../index.html?login=1");
+  } catch (error) {
+    say("Não foi possível sair. Tente novamente.");
+  } finally {
+    logout.disabled = false;
+  }
+};
 async function start(user) {
+  const ticket = ++bootstrap;
+  stopClock();
+  summaryVersion++;
   setPreviewScope("");
+  session = null;
+  profile = null;
+  metrics = null;
+  account.replaceChildren();
+  tabs.replaceChildren();
+  root.replaceChildren();
+  metricsRoot.replaceChildren();
+  metricsRoot.hidden = true;
+  summaryError.hidden = true;
+  alertDot.hidden = true;
   logout.hidden = !user;
-  document.querySelector("#profile-menu").textContent = user
-    ? "Minha conta"
-    : "Entrar";
+  bell.hidden = true;
+  exitPanel.hidden = !user;
+  label(profileButton, "user", user ? "Minha conta" : "Entrar");
   if (!user) {
     authView.hidden = false;
     view.hidden = true;
@@ -125,13 +201,14 @@ async function start(user) {
   }
   authView.hidden = true;
   view.hidden = false;
-  account.replaceChildren();
-  tabs.replaceChildren();
-  root.replaceChildren(empty("Validando acesso…"));
+  root.append(empty("Validando acesso…"));
   try {
     await reload(user);
     await user.getIdToken(true);
-    session = await api("session", "get");
+    const checked = await api("session", "get");
+    if (ticket !== bootstrap || auth.currentUser?.uid !== user.uid) return;
+    session = checked;
+    bell.hidden = session.admin;
     preview = session.admin && params.get("preview") === "1";
     if (session.admin && !preview) {
       account.append(heading("Área do cliente", session.email));
@@ -149,7 +226,7 @@ async function start(user) {
       account.append(
         el("p", {
           class: "ws-note",
-          text: "Prévia do portal: acesso somente ao conteúdo compartilhado com este cliente.",
+          text: "Prévia do portal: somente conteúdo compartilhado com o cliente.",
         }),
       );
       await openProject(
@@ -162,37 +239,22 @@ async function start(user) {
       );
       return;
     }
-    account.append(heading("Meu portal", session.email));
-    for (const label of [
-      "Meu painel",
-      "Meus orçamentos",
-      "Meus projetos",
-      "Aprovações",
-      "Mensagens",
-      "Arquivos",
-      "Notificações",
-    ])
-      tabs.append(
-        button(
-          label,
-          async () => {
-            active = label;
-            await render();
-          },
-          label === active,
-        ),
-      );
-    if (params.get("project"))
-      await openProject(root, params.get("project"), false, render);
+    profile = await api("profile", "get");
+    if (ticket !== bootstrap) return;
+    welcome();
+    buildPortalTabs(tabs, navigate);
+    metrics = buildMetrics(metricsRoot, navigate);
+    if (params.get("project")) await openClientProject(params.get("project"));
     else await render();
   } catch (error) {
+    if (ticket !== bootstrap) return;
     root.replaceChildren(empty(error.message));
     if (!user.emailVerified)
       root.append(
         button("Reenviar confirmação", async () => {
           await sendEmailVerification(user);
           say(
-            "Confirmação enviada. Verifique sua caixa de entrada e a pasta de spam ou lixo eletrônico.",
+            "Confirmação enviada. Confira a caixa de entrada e a pasta de spam ou lixo eletrônico.",
           );
         }),
         button("Já confirmei meu e-mail", () => start(user)),
@@ -200,60 +262,92 @@ async function start(user) {
     else root.append(button("Tentar novamente", () => start(user)));
   }
 }
+async function refreshSummary() {
+  if (!metrics || !session || session.admin || preview) return;
+  const version = ++summaryVersion;
+  metrics.loading();
+  summaryError.hidden = true;
+  try {
+    const values = await api("client-dashboard", "get");
+    if (version !== summaryVersion || !auth.currentUser) return;
+    metrics.update(values);
+    alertDot.hidden = values.unreadNotifications === 0;
+    bell.setAttribute(
+      "aria-label",
+      values.unreadNotifications
+        ? "Notificações: " + values.unreadNotifications + " não lidas"
+        : "Notificações",
+    );
+  } catch (error) {
+    if (version !== summaryVersion) return;
+    metrics.error();
+    summaryError.textContent =
+      "Não foi possível atualizar os indicadores: " + error.message;
+    summaryError.hidden = false;
+  }
+}
+async function navigate(label) {
+  if (!session || session.admin || preview) return;
+  active = label;
+  await render();
+}
 async function render() {
-  tabs
-    .querySelectorAll("button")
-    .forEach((b) => b.classList.toggle("primary", b.textContent === active));
+  if (!session || !auth.currentUser) return;
+  selectPortalTab(tabs, active);
+  metricsRoot.hidden = active !== "Meu painel";
   root.replaceChildren();
+  const content = el("section", { class: "portal-section-content" });
+  root.append(content);
+  refreshSummary();
   try {
     if (active === "Meu painel") {
-      root.append(
-        heading(
-          "Meus projetos e próximas entregas",
-          "As informações são atualizadas a cada consulta.",
-          button("Atualizar", render),
-        ),
-      );
-      await projectList(root);
+      await projectList(content, "Visão geral", true);
       return;
     }
     if (active === "Meus orçamentos") {
-      root.append(
+      content.append(
         heading(
           "Meus orçamentos",
-          "Leia a proposta vigente antes de registrar sua decisão.",
+          "Propostas e decisões relacionadas à sua conta.",
         ),
       );
       await pagedList(
-        root,
+        content,
         (cursor) => api("quotes", "list", { cursor }),
         (q) =>
           card(
-            q.nome,
-            `${q.tipoSistema} · ${q.status}`,
+            q.sentProposal?.title || q.nome,
+            q.tipoSistema + " · " + q.status,
             button("Abrir proposta", () => proposal(q)),
           ),
       );
       return;
     }
     if (active === "Notificações") {
-      root.append(heading("Notificações", "", button("Atualizar", render)));
+      content.append(
+        heading(
+          "Notificações",
+          "Acompanhe as atualizações da sua conta.",
+          button("Atualizar", render),
+        ),
+      );
       await pagedList(
-        root,
+        content,
         (cursor) => api("notifications", "list", { cursor }),
         (n) =>
           card(
             n.title,
-            `${dateText(n.createdAt)} · ${n.readAt ? "Lida" : "Não lida"}`,
+            dateText(n.createdAt) + " · " + (n.readAt ? "Lida" : "Não lida"),
             ...(n.projectId
               ? [
                   button("Abrir projeto", () =>
-                    openProject(
-                      root,
+                    openClientProject(
                       n.projectId,
-                      false,
-                      render,
-                      n.kind === "approval" ? "Aprovações" : "Visão geral",
+                      n.kind === "approval"
+                        ? "Aprovações"
+                        : n.kind === "message"
+                          ? "Mensagens"
+                          : "Visão geral",
                     ),
                   ),
                 ]
@@ -270,33 +364,153 @@ async function render() {
       );
       return;
     }
-    root.append(heading(active, "Selecione um projeto."));
+    if (active !== "Meus projetos")
+      content.append(heading(active, "Selecione um projeto para continuar."));
     await projectList(
-      root,
+      content,
       active === "Meus projetos" ? "Visão geral" : active,
+      false,
     );
+  } catch (error) {
+    if (content.isConnected)
+      content.replaceChildren(
+        empty(error.message),
+        button("Tentar novamente", render),
+      );
+  }
+}
+async function openClientProject(id, tab = "Visão geral") {
+  const origin = active;
+  metricsRoot.hidden = true;
+  summaryError.hidden = true;
+  selectPortalTab(tabs, "Meus projetos");
+  try {
+    await openProject(root, id, false, () => navigate(origin), tab);
   } catch (error) {
     root.replaceChildren(
       empty(error.message),
-      button("Tentar novamente", render),
+      button("Voltar", () => navigate(origin)),
     );
   }
 }
-async function projectList(target, tab = "Visão geral") {
-  await pagedList(
-    target,
-    (cursor) => api("projects", "list", { cursor }),
-    (p) =>
-      card(
-        p.name,
-        `${p.status} · ${p.progress || 0}% · Entrega: ${dateText(p.deadline)}`,
-        button(
-          "Abrir projeto",
-          () => openProject(root, p.id, false, render, tab),
-          true,
-        ),
-      ),
+async function projectList(target, tab = "Visão geral", overview = false) {
+  const input = el("input", {
+    type: "search",
+    value: projectSearch,
+    maxLength: 100,
+    placeholder: "Buscar projeto, cliente ou descrição...",
+    "aria-label": "Buscar projeto, cliente ou descrição",
+  });
+  const grid = el("div", { class: "portal-project-grid" }),
+    more = button("Carregar mais", () => load(false), true);
+  more.classList.add("portal-load-more");
+  more.replaceChildren(
+    portalIcon("plus"),
+    el("span", { text: "Carregar mais" }),
   );
+  more.hidden = true;
+  const refresh = button(
+    "Atualizar",
+    async () => {
+      await Promise.all([load(true), refreshSummary()]);
+    },
+    true,
+  );
+  refresh.classList.add("portal-refresh");
+  refresh.replaceChildren(
+    portalIcon("refresh"),
+    el("span", { text: "Atualizar" }),
+  );
+  const tools = el(
+    "div",
+    { class: "portal-project-tools" },
+    el("label", { class: "portal-search" }, portalIcon("search"), input),
+    refresh,
+  );
+  target.append(
+    el(
+      "header",
+      { class: "portal-project-heading" },
+      el(
+        "div",
+        {},
+        el("h2", {
+          text: overview
+            ? "Meus projetos e próximas entregas"
+            : active === "Meus projetos"
+              ? "Meus projetos"
+              : "Projetos disponíveis",
+        }),
+        el("p", { text: "As informações são atualizadas a cada consulta." }),
+      ),
+      tools,
+    ),
+    grid,
+    el("div", { class: "portal-load-more-wrap" }, more),
+  );
+  let cursor = null,
+    items = [],
+    request = 0,
+    timer;
+  input.oninput = () => {
+    clearTimeout(timer);
+    projectSearch = input.value;
+    timer = setTimeout(() => load(true), 350);
+  };
+  async function load(reset) {
+    if (!target.isConnected) return;
+    const version = ++request;
+    more.disabled = true;
+    grid.setAttribute("aria-busy", "true");
+    if (reset) {
+      cursor = null;
+      items = [];
+      more.hidden = true;
+      grid.replaceChildren(
+        el("p", {
+          class: "portal-list-status",
+          role: "status",
+          text: "Carregando projetos…",
+        }),
+      );
+    }
+    try {
+      const result = await api(
+        "projects",
+        projectSearch.trim() ? "search" : "list",
+        { search: projectSearch.trim(), cursor, limit: 12 },
+      );
+      if (version !== request || !target.isConnected) return;
+      items = reset ? result.items : [...items, ...result.items];
+      cursor = result.nextCursor;
+      grid.replaceChildren(
+        ...items.map((project) =>
+          projectCard(project, () => openClientProject(project.id, tab)),
+        ),
+      );
+      if (!items.length) grid.append(projectEmpty(projectSearch.trim()));
+      more.hidden = !cursor;
+    } catch (error) {
+      if (version !== request || !target.isConnected) return;
+      grid.replaceChildren(
+        el(
+          "div",
+          { class: "portal-project-empty" },
+          portalIcon("folder"),
+          el("h3", { text: "Não foi possível carregar os projetos" }),
+          el("p", { text: error.message }),
+          button("Tentar novamente", () => load(true), true),
+        ),
+      );
+      more.hidden = true;
+    } finally {
+      if (version === request) {
+        more.disabled = false;
+        grid.setAttribute("aria-busy", "false");
+      }
+    }
+  }
+  await load(true);
 }
 async function proposal(q) {
   root.replaceChildren(
@@ -351,8 +565,7 @@ async function proposal(q) {
                 proposalVersion: q.proposalVersion,
                 ...data,
               });
-              if (result.projectId)
-                await openProject(root, result.projectId, false, render);
+              if (result.projectId) await openClientProject(result.projectId);
               else await render();
             },
             "Registrar decisão",

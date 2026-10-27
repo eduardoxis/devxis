@@ -4,6 +4,8 @@ A implementação amplia o site existente. O painel continua sendo o modal admin
 
 O portal do cliente e o modal administrativo usam o menu do site, inclusive a navegação mobile. No modal administrativo, as abas de gestão permanecem abaixo desse cabeçalho; os links públicos fecham o modal e levam à seção do site. O acesso administrativo continua exclusivamente no rodapé.
 
+O portal do cliente possui um novo dashboard com saudação, relógio, indicadores reais, pesquisa e duas formas de saída. Veja [visual, índices necessários e testes do portal](portal-cliente.md).
+
 ## O que está implementado
 
 - Indicadores por consultas de agregação, entregas próximas e atividades recentes.

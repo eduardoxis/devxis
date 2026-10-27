@@ -159,6 +159,7 @@ try {
   await page.locator("#mobile-menu-close").click();
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.locator("#portal-logout").click();
+  await page.waitForURL("**/index.html?login=1");
   await page.goto("http://127.0.0.1:3000/?emulator=1");
   await page.waitForFunction(
     () => typeof document.querySelector("#profile-menu").onclick === "function",

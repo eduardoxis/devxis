@@ -26,6 +26,7 @@ import {
   expectRevision,
   row,
 } from "./core.js";
+import { matchesProject } from "../shared/project-search.js";
 const projectSchema = {
   name: (v) => str(v, 160, true),
   service: (v) => str(v, 100, true),
@@ -59,6 +60,39 @@ const taskSchema = {
 };
 export async function projects(ctx, action, body, params) {
   const coll = ctx.db.collection("client_projects");
+  if (action === "search") {
+    const search = str(params.search || "", 100);
+    const size = Math.floor(
+      Math.min(Math.max(Number(params.limit) || 12, 1), 50),
+    );
+    const allowed = ctx.admin ? coll : coll.where("clientUid", "==", ctx.uid);
+    let cursor = params.cursor ? id(params.cursor) : null,
+      items = [],
+      scanned = 0;
+    while (items.length <= size) {
+      let query = allowed.orderBy("__name__").limit(50);
+      if (cursor) query = query.startAfter(cursor);
+      const snapshot = await query.get();
+      scanned += snapshot.size;
+      check(
+        scanned <= 1000,
+        "A busca excede 1.000 projetos por consulta. Use a navegação por páginas.",
+        422,
+      );
+      for (const doc of snapshot.docs) {
+        const project = row(doc);
+        if (matchesProject(project, search))
+          items.push(ctx.admin ? project : projectForClient(project));
+        if (items.length > size) break;
+      }
+      if (items.length > size || snapshot.size < 50) break;
+      cursor = snapshot.docs.at(-1).id;
+    }
+    return {
+      items: items.slice(0, size),
+      nextCursor: items.length > size ? items[size - 1].id : null,
+    };
+  }
   if (action === "list")
     return page(
       ctx.admin ? coll : coll.where("clientUid", "==", ctx.uid),

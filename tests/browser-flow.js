@@ -40,7 +40,25 @@ try {
   await page.locator("#admin-login-form [type=submit]").click();
   await page.locator(".ws-kpis").waitFor({ timeout: 45000 });
   console.log("UI: dashboard carregado");
-  await page.locator("#close-admin").click();assert(await page.locator("#admin-modal").isHidden());await page.locator("#footer-admin").click();
+  assert(
+    await page.locator("#admin-site-header.panel-site-header").isVisible(),
+  );
+  await page.locator("#admin-site-header .portal-panel-exit").click();
+  assert(await page.locator("#admin-modal").isHidden());
+  assert(await page.locator("#header-logout").isVisible());
+  await page.locator("#footer-admin").click();
+  await page.locator(".ws-kpis").waitFor();
+  await page.locator("#admin-site-header .portal-bell").click();
+  await page
+    .getByRole("dialog", { name: "Notificações", exact: true })
+    .waitFor();
+  await page
+    .getByRole("dialog", { name: "Notificações", exact: true })
+    .getByRole("button", { name: "Fechar", exact: true })
+    .click();
+  await page.locator("#close-admin").click();
+  assert(await page.locator("#admin-modal").isHidden());
+  await page.locator("#footer-admin").click();
 
   assert.equal(
     await page.locator("#admin-site-header nav a").first().getAttribute("href"),
@@ -144,8 +162,12 @@ try {
     .screenshot({ path: "work/browser/admin-mobile.png" });
   const clientPage = await context.newPage();
   await clientPage.goto(`http://127.0.0.1:3000/pages/portal.html?emulator=1`);
-  await clientPage.evaluate(async()=>{const {auth}=await import("/firebase/firebase-config.js");await auth.authStateReady()});
-  if(await clientPage.locator("#portal-logout").isVisible())await clientPage.locator("#portal-logout").click();
+  await clientPage.evaluate(async () => {
+    const { auth } = await import("/firebase/firebase-config.js");
+    await auth.authStateReady();
+  });
+  if (await clientPage.locator("#portal-logout").isVisible())
+    await clientPage.locator("#portal-logout").click();
   await clientPage
     .locator("#portal-login [name=email]")
     .fill(fixture.clientEmail);
@@ -154,7 +176,7 @@ try {
     .fill(fixture.password);
   await clientPage.locator("#portal-login [type=submit]").click();
   await clientPage
-    .getByRole("heading", { name: "Meu portal" })
+    .getByRole("heading", { name: /^Olá,/ })
     .waitFor({ timeout: 45000 });
   await clientPage.evaluate(async (projectId) => {
     const { openProject } = await import("/js/workspace/project-console.js");
@@ -179,7 +201,7 @@ try {
     0,
   );
   await clientPage.reload();
-  await clientPage.getByRole("heading", { name: "Meu portal" }).waitFor();
+  await clientPage.locator(".portal-welcome-copy h1").waitFor();
   console.log(
     "Portal do cliente: acesso próprio, diagrama compartilhado somente leitura e persistência após recarregar OK.",
   );

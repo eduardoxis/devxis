@@ -15,14 +15,16 @@ import {
 } from "../server/communication.js";
 import { files } from "../server/files.js";
 import { clientProfile } from "../server/client-profile.js";
+import { clientDashboard } from "../server/client-dashboard.js";
 export const config = { api: { bodyParser: { sizeLimit: "320kb" } } };
 const reads = {
   profile: ["get", "list"],
   session: ["get"],
   dashboard: ["get"],
+  "client-dashboard": ["get"],
   clients: ["list"],
   quotes: ["list", "get", "history"],
-  projects: ["list", "get", "history"],
+  projects: ["list", "get", "history", "search"],
   stages: ["list"],
   tasks: ["list"],
   approvals: ["list", "versions"],
@@ -33,6 +35,10 @@ const reads = {
   files: ["list"],
 };
 export async function dispatch(ctx, resource, action, body = {}, params = {}) {
+  if (resource === "client-dashboard") {
+    check(action === "get", "Ação inválida.");
+    return clientDashboard(ctx);
+  }
   if (resource === "profile") return clientProfile(ctx, action, body, params);
   if (resource === "session")
     return { uid: ctx.uid, email: ctx.email, name: ctx.name, admin: ctx.admin };

@@ -13,11 +13,19 @@
     />
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/responsive.css?v=menu-mobile-4" />
-    <link rel="stylesheet" href="../css/solid-colors.css?v=shared-navigation-6" />
+    <link
+      rel="stylesheet"
+      href="../css/solid-colors.css?v=shared-navigation-6"
+    />
     <link rel="stylesheet" href="../css/workspace.css?v=shared-navigation-6" />
+    <link
+      rel="stylesheet"
+      href="../css/client-portal.css?v=portal-redesign-1"
+    />
+    <link rel="stylesheet" href="../css/site-header.css?v=official-panel-1" />
   </head>
-  <body class="workspace-page">
-    <header class="site-header">
+  <body class="workspace-page portal-page">
+    <header class="site-header official-site-header panel-site-header">
       <a class="brand" href="../index.html#inicio" aria-label="DEVXIS, início"
         ><img src="../assets/images/logo-devxis.png" alt="DEVXIS" /><span
           >dev<span>xis</span></span
@@ -36,16 +44,37 @@
       <a class="button primary header-cta" href="../index.html#orcamento"
         >Começar agora <span>→</span></a
       >
-      <div class="profile-area">
+      <div class="profile-area portal-header-actions">
+        <button
+          id="portal-notifications"
+          class="portal-header-button portal-bell"
+          type="button"
+          aria-label="Notificações"
+          hidden
+        >
+          <span>Notificações</span>
+        </button>
         <button
           id="profile-menu"
-          class="profile-button"
+          class="portal-header-button portal-account-button"
           type="button"
-          aria-label="Minha conta"
         >
-          Entrar</button
-        ><button id="portal-logout" class="ws-button" type="button" hidden>
-          Sair
+          Minha conta
+        </button>
+        <a
+          id="portal-exit"
+          class="portal-header-button portal-panel-exit"
+          href="../index.html"
+          hidden
+          >Sair do painel</a
+        >
+        <button
+          id="portal-logout"
+          class="portal-header-button portal-account-exit"
+          type="button"
+          hidden
+        >
+          Sair da conta
         </button>
       </div>
     </header>
@@ -128,19 +157,31 @@
         <p id="portal-auth-message" role="status"></p>
       </section>
       <section id="portal-view" hidden>
-        <div id="portal-account"></div>
+        <div id="portal-account" class="portal-welcome"></div>
         <nav
           id="portal-tabs"
           class="ws-tabs"
           aria-label="Portal do cliente"
         ></nav>
+        <section
+          id="portal-metrics"
+          class="portal-metrics"
+          aria-label="Resumo da sua conta"
+          hidden
+        ></section>
+        <p
+          id="portal-summary-error"
+          class="portal-summary-error"
+          role="status"
+          hidden
+        ></p>
         <div id="portal-content" class="ws-root"></div>
       </section>
     </main>
     <div id="toast" role="status"></div>
     <script
       type="module"
-      src="../js/client/portal.js?v=account-persistence-4"
+      src="../js/client/portal.js?v=portal-redesign-1"
     ></script>
   </body>
 </html>
