@@ -43,6 +43,39 @@ function setup() {
   const other = { ...client, uid: "other" };
   return { db, admin, client, other };
 }
+test("cadastro salva contato e interesse sem permitir privilégios ou dados de terceiros", async () => {
+  const { admin, client, other } = setup();
+  const profile = await dispatch(client, "profile", "save", {
+    data: {
+      name: "Cliente",
+      phone: "(61) 99999-9999",
+      company: "Empresa",
+      service: "Sistema web",
+      budget: "R$ 2.000 a R$ 5.000",
+      description: "Projeto solicitado",
+    },
+  });
+  assert.equal(profile.email, client.email);
+  assert.equal(profile.uid, client.uid);
+  assert.equal((await dispatch(client, "profile", "get")).name, "Cliente");
+  assert.equal(await dispatch(other, "profile", "get"), null);
+  await assert.rejects(
+    () => dispatch(other, "profile", "get", {}, { uid: client.uid }),
+    /administrador/,
+  );
+  await assert.rejects(
+    () => dispatch(client, "profile", "list"),
+    /administrador/,
+  );
+  await assert.rejects(
+    () =>
+      dispatch(client, "profile", "save", {
+        data: { name: "Cliente", phone: "123", isAdmin: true },
+      }),
+    /permitido/,
+  );
+  assert.equal((await dispatch(admin, "profile", "list")).items.length, 1);
+});
 const quoteData = {
   nome: "Cliente real de teste",
   email: "client@example.com",

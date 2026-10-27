@@ -391,20 +391,20 @@ footer {
 }
 
 /* Menu mobile isolado: não reutiliza nem altera a navegação do desktop. */
-#mobile-drawer,
-#mobile-menu-backdrop { display: none; }
-#mobile-menu-backdrop[hidden] { display: none !important; }
+:is(#mobile-drawer,#admin-site-mobile-drawer),
+:is(#mobile-menu-backdrop,#admin-site-mobile-menu-backdrop) { display: none; }
+:is(#mobile-menu-backdrop,#admin-site-mobile-menu-backdrop)[hidden] { display: none !important; }
 
 @media (max-width: 680px) {
   body.mobile-menu-open { overflow: hidden; }
-  #mobile-menu-backdrop {
+  :is(#mobile-menu-backdrop,#admin-site-mobile-menu-backdrop) {
     position: fixed;
     inset: 0;
     z-index: 90;
     display: block;
     background: rgb(7 24 50 / 52%);
   }
-  #mobile-drawer {
+  :is(#mobile-drawer,#admin-site-mobile-drawer) {
     position: fixed;
     inset: 0 0 0 auto;
     z-index: 91;
@@ -420,7 +420,7 @@ footer {
     transform: translateX(105%);
     transition: transform 280ms ease;
   }
-  #mobile-drawer.is-open { transform: translateX(0); }
+  :is(#mobile-drawer,#admin-site-mobile-drawer).is-open { transform: translateX(0); }
   .mobile-drawer__head {
     display: flex;
     align-items: center;
@@ -429,7 +429,7 @@ footer {
   }
   .mobile-drawer__head .brand { font-size: 29px; }
   .mobile-drawer__head .brand img { width: 48px; height: 48px; }
-  #mobile-menu-close {
+  :is(#mobile-menu-close,#admin-site-mobile-menu-close) {
     display: grid;
     width: 52px;
     height: 52px;
@@ -440,7 +440,7 @@ footer {
     color: #071832;
     cursor: pointer;
   }
-  #mobile-menu-close svg {
+  :is(#mobile-menu-close,#admin-site-mobile-menu-close) svg {
     width: 34px;
     height: 34px;
     fill: none;
@@ -500,12 +500,12 @@ footer {
 }
 
 @media (max-width: 680px) {
-  #mobile-drawer { padding: 25px 17px; }
+  :is(#mobile-drawer,#admin-site-mobile-drawer) { padding: 25px 17px; }
   .mobile-drawer__head { margin-bottom: 42px; }
   .mobile-drawer__head .brand { font-size: 18px; }
   .mobile-drawer__head .brand img { width: 30px; height: 30px; }
-  #mobile-menu-close { width: 32px; height: 32px; padding: 6px; }
-  #mobile-menu-close svg { width: 22px; height: 22px; }
+  :is(#mobile-menu-close,#admin-site-mobile-menu-close) { width: 32px; height: 32px; padding: 6px; }
+  :is(#mobile-menu-close,#admin-site-mobile-menu-close) svg { width: 22px; height: 22px; }
   .mobile-drawer__links { gap: 18px; }
   .mobile-drawer__links a { grid-template-columns: 27px 1fr 14px; min-height: 48px; font-size: 12px; }
   .mobile-drawer__links svg, .mobile-drawer__cta > svg { width: 19px; height: 19px; }

@@ -803,6 +803,22 @@
 }
 
 #client-register[hidden] { display: none !important; }
+#portal-logout[hidden] { display:none!important; }
+.admin-site-navigation { margin-bottom:18px; }
+.admin-modal-box > #close-admin { z-index:25; }
+.admin-site-navigation .site-header { position:relative;top:auto;height:76px;padding:0 48px 0 0;gap:18px;box-shadow:none;border-bottom:1px solid #dce8fa; }
+.admin-site-navigation .profile-area { display:flex;align-items:center;gap:8px; }
+.admin-site-navigation .profile-button { white-space:nowrap; }
+.admin-site-navigation #admin-logout { padding:10px;font-size:11px;white-space:nowrap; }
+.admin-panel-title h2 { margin:12px 0 18px;color:#071832;font:700 24px var(--font-head);letter-spacing:-.04em; }
+#admin-site-mobile-menu-backdrop { z-index:115; }
+#admin-site-mobile-drawer { z-index:116; }
+@media(max-width:1100px){.admin-site-navigation .header-cta{display:none}}
+@media(max-width:680px){.admin-site-navigation .site-header{padding:0 44px 0 0;gap:8px;height:60px}.admin-site-navigation .brand{font-size:15px}.admin-site-navigation .brand img{width:26px;height:26px}.admin-site-navigation .profile-button{padding:7px;min-width:0;font-size:10px}.admin-site-navigation #admin-logout{padding:7px;font-size:10px}.admin-site-navigation .profile-area{gap:4px}.admin-site-navigation #admin-logout .admin-icon{display:none}}
+.workspace-page .site-header .profile-area { display:flex;align-items:center;gap:8px; }
+.workspace-page .site-header .profile-button { white-space:nowrap; }
+.workspace-page #portal-account { scroll-margin-top:95px; }
+@media(max-width:680px){.workspace-page .site-header{gap:12px;padding-inline:16px}.workspace-page .site-header .profile-area{gap:5px}.workspace-page #portal-logout{padding:8px;font-size:11px}.workspace-page .site-header .profile-button{padding:8px;min-width:0}}
 #admin-login-form > #client-register { margin-top: 12px; }
 .client-registration-box { width:min(480px,calc(100vw - 32px));min-height:0;max-height:calc(100dvh - 32px);padding:28px 26px; }
 .client-registration-box h2 { margin:18px 0 6px;color:#071832;font-family:var(--font-head);font-size:28px; }
@@ -816,3 +832,12 @@
 .client-registration-error:empty { display:none; }
 .client-auth-notice { padding:12px;border:1px solid #b6dfc9;border-radius:9px;background:#edf9f2;color:#176840;font-size:12px; }
 .client-auth-notice[hidden] { display:none!important; }
+.client-registration-box .client-password-field { position:relative;display:block; }
+.client-registration-box .admin-modal-logo { display:block;width:110px;height:auto;max-height:64px;object-fit:contain; }
+#client-registration-form .client-password-field input { padding-right:48px; }
+.client-password-field > button { position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:7px;background:transparent;color:#607598;display:grid;place-items:center;cursor:pointer; }
+.client-password-field > button:hover { color:#087bff;background:#edf5ff; }
+.client-password-field svg { width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8; }
+.client-project-interest { display:grid;gap:14px;border:1px solid #dce8fa;border-radius:12px;padding:16px;margin:0;min-width:0; }
+.client-project-interest legend { color:#607598;font-size:12px;padding:0 6px; }
+#client-registration-form select,#client-registration-form textarea { width:100%;min-width:0;padding:12px;border:1px solid #dce8f8;border-radius:9px;background:#f7faff;color:#071832;font:inherit; }

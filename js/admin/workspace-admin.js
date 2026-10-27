@@ -86,7 +86,7 @@ export async function renderWorkspaceAdmin(root, tab) {
     root.append(
       heading(
         "Clientes",
-        "O cliente cria sua conta no portal e confirma o e-mail. Vincule pelo UID informado por ele.",
+        "Vincule os cadastros recebidos abaixo após o cliente confirmar o e-mail.",
         button("+ Vincular cliente", () => editClient()),
       ),
     );
@@ -99,6 +99,40 @@ export async function renderWorkspaceAdmin(root, tab) {
           `${client.company || ""} · ${client.email} · UID: ${client.id}`,
           button("Editar", () => editClient(client)),
         ),
+    );
+    root.append(
+      heading(
+        "Cadastros recebidos",
+        "Dados informados pelos clientes. A vinculação continua exigindo e-mail confirmado.",
+      ),
+    );
+    await pagedList(
+      root,
+      (cursor) => api("profile", "list", { cursor }),
+      (profile) => {
+        const item = card(
+          profile.name,
+          `${profile.email} · ${profile.phone}${profile.company ? ` · ${profile.company}` : ""}`,
+          button("Vincular cadastro", () =>
+            editClient({
+              id: profile.uid,
+              name: profile.name,
+              phone: profile.phone,
+              company: profile.company,
+            }),
+          ),
+        );
+        if (profile.service || profile.budget || profile.description)
+          item.append(
+            detail(
+              "Interesse do cliente",
+              [profile.service, profile.budget, profile.description]
+                .filter(Boolean)
+                .join(" · "),
+            ),
+          );
+        return item;
+      },
     );
     return;
   }

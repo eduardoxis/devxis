@@ -1,12 +1,16 @@
+import { initializeSiteNavigation } from "../utils/site-navigation.js";
+import { openRegistration } from "./registration-modal.js";
 import { auth } from "../../firebase/firebase-config.js";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
   signOut,
   reload,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { api, write, setPreviewScope } from "../services/workspace-service.js";
 import {
@@ -33,6 +37,14 @@ const authView = document.querySelector("#portal-auth"),
   form = document.querySelector("#portal-login"),
   message = document.querySelector("#portal-auth-message"),
   logout = document.querySelector("#portal-logout");
+initializeSiteNavigation();
+document.querySelector("#profile-menu").onclick = () => {
+  const target = auth.currentUser
+    ? document.querySelector("#portal-account")
+    : authView;
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (!auth.currentUser) form.elements.email.focus();
+};
 let session,
   active = "Meu painel",
   preview = false;
@@ -60,18 +72,33 @@ form.onsubmit = (event) => {
   event.preventDefault();
   attempt(async () => {
     const { email, password } = credentials();
+    await setPersistence(
+      auth,
+      form.elements.remember.checked
+        ? browserLocalPersistence
+        : browserSessionPersistence,
+    );
     await signInWithEmailAndPassword(auth, email, password);
   });
 };
 document.querySelector("#portal-register").onclick = () => {
-  if (!form.reportValidity()) return;
-  attempt(async () => {
-    const { email, password } = credentials();
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(result.user);
-    message.textContent =
-      "Conta criada. Confirme o e-mail recebido para liberar o acesso.";
-    await start(result.user);
+  authView.hidden = true;
+  openRegistration({
+    auth,
+    email: form.elements.email.value.trim(),
+    onCancel: () => {
+      authView.hidden = false;
+      form.elements.email.focus();
+    },
+    onCreated: async ({ email, verificationSent }) => {
+      await start(null);
+      form.elements.email.value = email;
+      form.elements.password.value = "";
+      message.textContent = verificationSent
+        ? "Conta criada! Confira seu e-mail, inclusive a pasta de spam ou lixo eletrônico. Depois de confirmar, entre com sua senha."
+        : "Conta criada! Entre com sua senha para reenviar a confirmação de e-mail.";
+      form.elements.password.focus();
+    },
   });
 };
 document.querySelector("#portal-reset").onclick = () =>
@@ -88,6 +115,9 @@ logout.onclick = () => signOut(auth);
 async function start(user) {
   setPreviewScope("");
   logout.hidden = !user;
+  document.querySelector("#profile-menu").textContent = user
+    ? "Minha conta"
+    : "Entrar";
   if (!user) {
     authView.hidden = false;
     view.hidden = true;
@@ -104,8 +134,12 @@ async function start(user) {
     session = await api("session", "get");
     preview = session.admin && params.get("preview") === "1";
     if (session.admin && !preview) {
-      account.append(heading('Área do cliente',session.email));
-      root.replaceChildren(empty('Esta é uma conta administrativa. Para acessar a administração, use o link no rodapé do site.'));
+      account.append(heading("Área do cliente", session.email));
+      root.replaceChildren(
+        empty(
+          "Esta é uma conta administrativa. Para acessar a administração, use o link no rodapé do site.",
+        ),
+      );
       return;
     }
     if (preview) {
@@ -128,20 +162,7 @@ async function start(user) {
       );
       return;
     }
-    account.append(
-      heading(
-        "Meu portal",
-        session.email,
-        button("Copiar meu UID", () =>
-          navigator.clipboard.writeText(session.uid),
-        ),
-      ),
-    );
-    account.append(
-      el("small", {
-        text: `Seu UID para vinculação pelo administrador: ${session.uid}`,
-      }),
-    );
+    account.append(heading("Meu portal", session.email));
     for (const label of [
       "Meu painel",
       "Meus orçamentos",
@@ -170,7 +191,9 @@ async function start(user) {
       root.append(
         button("Reenviar confirmação", async () => {
           await sendEmailVerification(user);
-          say("Confirmação enviada. Verifique sua caixa de entrada.");
+          say(
+            "Confirmação enviada. Verifique sua caixa de entrada e a pasta de spam ou lixo eletrônico.",
+          );
         }),
         button("Já confirmei meu e-mail", () => start(user)),
       );

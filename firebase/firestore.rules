@@ -55,6 +55,7 @@ service cloud.firestore {
     // valida o vínculo ao cliente e a visibilidade de cada documento no servidor.
     match /client_projects/{id}/{document=**} { allow read, write: if false; }
     match /clients/{id} { allow read, write: if false; }
+    match /client_profiles/{id} { allow read, write: if false; }
     match /notifications/{id} { allow read, write: if false; }
     match /activity_logs/{id} { allow read, write: if false; }
   }

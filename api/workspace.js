@@ -14,8 +14,10 @@ import {
   dashboard,
 } from "../server/communication.js";
 import { files } from "../server/files.js";
+import { clientProfile } from "../server/client-profile.js";
 export const config = { api: { bodyParser: { sizeLimit: "320kb" } } };
 const reads = {
+  profile: ["get", "list"],
   session: ["get"],
   dashboard: ["get"],
   clients: ["list"],
@@ -31,6 +33,7 @@ const reads = {
   files: ["list"],
 };
 export async function dispatch(ctx, resource, action, body = {}, params = {}) {
+  if (resource === "profile") return clientProfile(ctx, action, body, params);
   if (resource === "session")
     return { uid: ctx.uid, email: ctx.email, name: ctx.name, admin: ctx.admin };
   if (resource === "dashboard") return dashboard(ctx);
@@ -85,7 +88,10 @@ export default async function handler(request, response) {
       record = await db.collection("users").doc(user.uid).get(),
       admin = record.exists && record.data().isAdmin === true;
     check(
-      admin || user.email_verified === true,
+      admin ||
+        user.email_verified === true ||
+        (request.query?.resource === "profile" &&
+          ["save", "get"].includes(request.query?.action)),
       "Confirme seu e-mail antes de acessar o portal.",
       403,
     );

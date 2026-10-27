@@ -40,6 +40,26 @@ try {
   await page.locator("#admin-login-form [type=submit]").click();
   await page.locator(".ws-kpis").waitFor({ timeout: 45000 });
   console.log("UI: dashboard carregado");
+  await page.locator("#close-admin").click();assert(await page.locator("#admin-modal").isHidden());await page.locator("#footer-admin").click();
+
+  assert.equal(
+    await page.locator("#admin-site-header nav a").first().getAttribute("href"),
+    "#sobre",
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("#admin-site-header .menu-toggle").click();
+  assert(
+    await page
+      .locator("#admin-site-mobile-drawer")
+      .evaluate((node) => node.classList.contains("is-open")),
+  );
+  await page.locator("#admin-site-mobile-menu-close").click();
+  await page.setViewportSize({ width: 1760, height: 1060 });
+  await page.locator("#admin-site-header nav a").first().click();
+  assert(await page.locator("#admin-modal").isHidden());
+  await page.locator("#footer-admin").click();
+  await page.locator(".ws-kpis").waitFor();
+
   await page.locator('[data-admin-tab="client-projects"]').click();
   await page
     .getByRole("heading", { name: "Projetos de clientes", exact: true })
@@ -124,7 +144,8 @@ try {
     .screenshot({ path: "work/browser/admin-mobile.png" });
   const clientPage = await context.newPage();
   await clientPage.goto(`http://127.0.0.1:3000/pages/portal.html?emulator=1`);
-  await clientPage.locator("#portal-logout").click();
+  await clientPage.evaluate(async()=>{const {auth}=await import("/firebase/firebase-config.js");await auth.authStateReady()});
+  if(await clientPage.locator("#portal-logout").isVisible())await clientPage.locator("#portal-logout").click();
   await clientPage
     .locator("#portal-login [name=email]")
     .fill(fixture.clientEmail);

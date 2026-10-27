@@ -2,6 +2,8 @@
 
 A implementação amplia o site existente. O painel continua sendo o modal administrativo com cabeçalho e abas horizontais. Abrir um projeto expande esse mesmo modal; **Voltar** retorna à administração. O portfólio público permanece na coleção `projects` e na aba **Portfólio**.
 
+O portal do cliente e o modal administrativo usam o menu do site, inclusive a navegação mobile. No modal administrativo, as abas de gestão permanecem abaixo desse cabeçalho; os links públicos fecham o modal e levam à seção do site. O acesso administrativo continua exclusivamente no rodapé.
+
 ## O que está implementado
 
 - Indicadores por consultas de agregação, entregas próximas e atividades recentes.
@@ -31,13 +33,15 @@ O código mantém compatibilidade com o backend existente da Vercel, mas **Verce
 
 ## Vincular um cliente com segurança
 
-1. O cliente usa **Entrar → Criar conta** em `pages/portal.html` e confirma o e-mail recebido pelo Firebase Authentication.
-2. Ele entra no portal e informa seu UID ao administrador.
-3. Na aba **Clientes**, o administrador usa **Vincular cliente**. O servidor consulta a conta no Authentication e exige e-mail verificado; ele não confia em um e-mail digitado no formulário público.
+1. O cliente usa **Entrar → Criar conta**. O modal pede nome, WhatsApp, e-mail, senha e confirmação; empresa e informações do projeto são opcionais. Os dados são persistidos em `client_profiles/<uid>` pela API autenticada. Não há envio automático de orçamento.
+2. Depois do cadastro, a sessão é encerrada e o cliente volta ao login. O aviso orienta a verificar a caixa de entrada e a pasta de spam/lixo eletrônico para confirmar o e-mail.
+3. Na aba **Clientes**, o administrador encontra **Cadastros recebidos → Vincular cadastro**. O cliente não precisa copiar ou visualizar um UID. O servidor consulta a conta no Authentication e exige e-mail verificado para vincular; ele não confia em um e-mail digitado no formulário público.
 4. O administrador confere a identidade e vincula o UID ao orçamento na edição.
 5. Elabora e envia a proposta. O cliente lê escopo, valor, entregas, condições e prazo no portal antes de responder.
 
 O destinatário de um orçamento já vinculado não pode ser substituído. Uma proposta aceita não pode ser reescrita. Mudanças de prazo ou escopo contratado devem passar por solicitação de aprovação.
+
+**Manter conectado** vem marcado no login do cliente e pode ser desmarcado. Usa a persistência nativa do Firebase Authentication; nenhuma senha é salva pelo aplicativo. Com sessão ativa, o cabeçalho mostra **Minha conta**, inclusive após recarregar ou abrir outra aba. Ao sair, volta a **Entrar**. Usuários ainda sem e-mail confirmado podem somente salvar/ler o próprio cadastro; o restante do portal continua exigindo confirmação.
 
 ## Estrutura persistente e permissões
 
@@ -49,6 +53,7 @@ O destinatário de um orçamento já vinculado não pode ser substituído. Uma p
 | `quotes/<id>/versions` | Propostas enviadas imutáveis |
 | `quotes/<id>/history`, `decisions` | Auditoria e respostas do orçamento |
 | `clients/<uid>` | Cliente associado a uma conta verificada |
+| `client_profiles/<uid>` | Dados de contato e interesse informados no cadastro, sem privilégios |
 | `client_projects/<id>` | Projeto privado e termos vigentes |
 | `client_projects/<id>/stages`, `tasks` | Etapas e tarefas |
 | `client_projects/<id>/uml/<id>/versions` | Diagramas e versões separadas |
