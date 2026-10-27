@@ -124,6 +124,19 @@ class Query {
     };
   }
   async get() {
+    if (this.db.queryError) throw this.db.queryError;
+    if (
+      this.db.missingIndexes &&
+      (this.group ||
+        this.filters.length > 1 ||
+        (this.filters.length &&
+          this.orders.some(([field]) => field !== "__name__")))
+    ) {
+      throw Object.assign(
+        new Error("The query requires an index. Index is building."),
+        { code: 9 },
+      );
+    }
     let paths = [...this.db.data.keys()].filter((path) =>
       this.group
         ? path.split("/").at(-2) === this.path

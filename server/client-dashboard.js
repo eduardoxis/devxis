@@ -1,4 +1,5 @@
 import { check } from "../shared/workspace-domain.js";
+import { indexedCount, boundedRows } from "./query-fallback.js";
 
 export async function clientDashboard(ctx) {
   check(!ctx.admin, "Esta visão usa exclusivamente a conta do cliente.", 403);
@@ -6,7 +7,16 @@ export async function clientDashboard(ctx) {
     projects = db
       .collection("client_projects")
       .where("clientUid", "==", ctx.uid);
-  const count = async (query) => (await query.count().get()).data().count;
+  const count = indexedCount;
+  let ownedPromise;
+  const owned = () => (ownedPromise ||= boundedRows(projects));
+  const activeStatuses = [
+    "Aguardando início",
+    "Em planejamento",
+    "Em desenvolvimento",
+    "Aguardando cliente",
+    "Em revisão",
+  ];
   const [activeProjects, quotes, pendingApprovals, unreadNotifications] =
     await Promise.all([
       count(
@@ -17,19 +27,53 @@ export async function clientDashboard(ctx) {
           "Aguardando cliente",
           "Em revisão",
         ]),
+        async () =>
+          (await owned()).filter((project) =>
+            activeStatuses.includes(project.status),
+          ).length,
       ),
-      count(db.collection("quotes").where("clientUid", "==", ctx.uid)),
+      count(
+        db.collection("quotes").where("clientUid", "==", ctx.uid),
+        async () =>
+          (
+            await boundedRows(
+              db.collection("quotes").where("clientUid", "==", ctx.uid),
+            )
+          ).length,
+      ),
       count(
         db
           .collectionGroup("approvals")
           .where("clientUid", "==", ctx.uid)
           .where("status", "==", "pendente"),
+        async () => {
+          let total = 0;
+          for (const project of await owned()) {
+            const approvals = await boundedRows(
+              db
+                .collection("client_projects")
+                .doc(project.id)
+                .collection("approvals"),
+            );
+            total += approvals.filter(
+              (item) =>
+                item.clientUid === ctx.uid && item.status === "pendente",
+            ).length;
+          }
+          return total;
+        },
       ),
       count(
         db
           .collection("notifications")
           .where("recipient", "==", ctx.uid)
           .where("readAt", "==", null),
+        async () =>
+          (
+            await boundedRows(
+              db.collection("notifications").where("recipient", "==", ctx.uid),
+            )
+          ).filter((item) => item.readAt === null).length,
       ),
     ]);
   // A consulta parte dos projetos autorizados, incluindo mensagens antigas que
@@ -60,6 +104,19 @@ export async function clientDashboard(ctx) {
                 .where("visible", "==", true)
                 .where("authorRole", "==", "Administrador")
                 .where("readAt", "==", null),
+              async () =>
+                (
+                  await boundedRows(
+                    db
+                      .collection("client_projects")
+                      .doc(project.id)
+                      .collection("messages")
+                      .where("visible", "==", true),
+                  )
+                ).filter(
+                  (item) =>
+                    item.authorRole === "Administrador" && item.readAt === null,
+                ).length,
             ),
           ),
       );

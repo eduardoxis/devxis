@@ -29,7 +29,7 @@ Os novos indicadores usam os índices adicionados a `firebase/firestore.indexes.
 firebase deploy --only firestore:indexes --project devxis-91948
 ```
 
-Espere os índices ficarem prontos no Console do Firebase. Sem eles, o portal apresenta uma mensagem de erro nos indicadores, sem substituir dados indisponíveis por zeros fictícios. As regras e a validação do vínculo do cliente continuam no servidor.
+Os índices continuam recomendados para consultas eficientes. Enquanto estiverem ausentes ou em construção, o resumo e a lista de notificações usam consultas alternativas restritas à própria conta. Os resultados são calculados a partir dos registros reais, mantendo a mesma ordenação e o mesmo cursor de paginação das notificações. A alternativa lê até 1.000 registros por consulta; acima disso, pede a publicação dos índices, sem devolver resultados parciais. Falhas de permissão, conexão e cota não são ocultadas por essa alternativa. As regras e a validação do vínculo do cliente continuam no servidor.
 
 As consultas do resumo partem dos projetos da conta. Para compatibilidade com mensagens existentes, a contagem de não lidas usa agregações nas conversas de cada projeto, em lotes de dez. Não há listener global ou consulta de conversas de outros clientes. O resumo e a busca têm limite explícito de 1.000 projetos por consulta; ao exceder, a API informa a limitação em vez de fornecer totais parciais. A busca usa páginas de até 50 documentos no servidor e o portal apresenta 12 resultados por página.
 

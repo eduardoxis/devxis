@@ -16,6 +16,11 @@ import {
   requireAdmin,
   row,
 } from "./core.js";
+import {
+  missingIndex,
+  boundedRows,
+  notificationPage,
+} from "./query-fallback.js";
 export async function messages(ctx, action, body, params) {
   const projectId = id(body.projectId || params.projectId);
   const project = await projectAccess(ctx, projectId);
@@ -88,13 +93,20 @@ export async function messages(ctx, action, body, params) {
 export async function notifications(ctx, action, body, params) {
   const recipient = ctx.admin ? "admin" : ctx.uid;
   const coll = ctx.db.collection("notifications");
-  if (action === "list")
-    return page(
-      coll.where("recipient", "==", recipient),
-      params,
-      "createdAt",
-      "desc",
-    );
+  if (action === "list") {
+    const owned = coll.where("recipient", "==", recipient);
+    try {
+      return await page(
+        coll.where("recipient", "==", recipient),
+        params,
+        "createdAt",
+        "desc",
+      );
+    } catch (error) {
+      if (!missingIndex(error)) throw error;
+      return notificationPage(await boundedRows(owned), params);
+    }
+  }
   check(action === "read", "Ação inválida.");
   const ref = coll.doc(id(body.id));
   await ctx.db.runTransaction(async (tx) => {

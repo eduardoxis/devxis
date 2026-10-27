@@ -110,6 +110,148 @@ test("indicadores do portal contam somente os registros do cliente e atualizam l
     /cliente/,
   );
 });
+test("portal funciona com índices ausentes, mantém paginação e isola as contas", async () => {
+  const { db, client, other } = setup();
+  db.seed("client_projects/own", {
+    clientUid: client.uid,
+    status: "Em desenvolvimento",
+  });
+  db.seed("client_projects/foreign", {
+    clientUid: other.uid,
+    status: "Em desenvolvimento",
+  });
+  db.seed("quotes/own", { clientUid: client.uid });
+  for (const [project, uid] of [
+    ["own", client.uid],
+    ["foreign", other.uid],
+  ]) {
+    db.seed(`client_projects/${project}/approvals/a`, {
+      clientUid: uid,
+      status: "pendente",
+    });
+    db.seed(`client_projects/${project}/messages/a`, {
+      visible: true,
+      authorRole: "Administrador",
+      readAt: null,
+    });
+  }
+  db.seed("client_projects/own/messages/private", {
+    visible: false,
+    authorRole: "Administrador",
+    readAt: null,
+  });
+  for (let i = 0; i < 4; i++)
+    db.seed(`notifications/n${i}`, {
+      recipient: client.uid,
+      createdAt: `2026-10-27T10:00:0${i}Z`,
+      readAt: null,
+    });
+  db.seed("notifications/foreign", {
+    recipient: other.uid,
+    createdAt: "2026-10-27T11:00:00Z",
+    readAt: null,
+  });
+  const expected = await dispatch(client, "client-dashboard", "get");
+  const indexed = await dispatch(
+    client,
+    "notifications",
+    "list",
+    {},
+    { limit: 2 },
+  );
+  db.missingIndexes = true;
+  const actual = await dispatch(client, "client-dashboard", "get");
+  for (const key of [
+    "activeProjects",
+    "quotes",
+    "pendingApprovals",
+    "unreadMessages",
+    "unreadNotifications",
+  ])
+    assert.equal(actual[key], expected[key]);
+  const first = await dispatch(
+    client,
+    "notifications",
+    "list",
+    {},
+    { limit: 2 },
+  );
+  assert.deepEqual(first, indexed);
+  const second = await dispatch(
+    client,
+    "notifications",
+    "list",
+    {},
+    { limit: 2, cursor: first.nextCursor },
+  );
+  assert.deepEqual(
+    [...first.items, ...second.items].map((item) => item.id),
+    ["n3", "n2", "n1", "n0"],
+  );
+  assert.equal(second.nextCursor, null);
+  await dispatch(client, "notifications", "read", { id: "n3" });
+  assert.equal(
+    (await dispatch(client, "client-dashboard", "get")).unreadNotifications,
+    3,
+  );
+  await assert.rejects(
+    () => dispatch(client, "notifications", "list", {}, { cursor: "invalid" }),
+    /Página inválida/,
+  );
+  // A ready index can resume a page created by the fallback.
+  db.missingIndexes = false;
+  const resumed = await dispatch(
+    client,
+    "notifications",
+    "list",
+    {},
+    { limit: 2, cursor: first.nextCursor },
+  );
+  assert.deepEqual(
+    resumed.items.map((item) => item.id),
+    ["n1", "n0"],
+  );
+});
+test("falhas de conexão ou permissão não são tratadas como índices ausentes", async () => {
+  const { db, client } = setup();
+  for (const code of [7, 8, 14]) {
+    db.queryError = Object.assign(new Error("Falha real"), { code });
+    await assert.rejects(
+      () => dispatch(client, "notifications", "list"),
+      /Falha real/,
+    );
+    await assert.rejects(
+      () => dispatch(client, "client-dashboard", "get"),
+      /Falha real/,
+    );
+  }
+});
+test("alternativa sem índice recusa resultados parciais e suporta conta vazia", async () => {
+  const { db, client } = setup();
+  db.missingIndexes = true;
+  assert.equal(
+    (await dispatch(client, "client-dashboard", "get")).activeProjects,
+    0,
+  );
+  assert.deepEqual(await dispatch(client, "notifications", "list"), {
+    items: [],
+    nextCursor: null,
+  });
+  for (let i = 0; i < 1001; i++)
+    db.seed(`notifications/n${i}`, {
+      recipient: client.uid,
+      createdAt: "2026-10-27T10:00:00Z",
+      readAt: null,
+    });
+  await assert.rejects(
+    () => dispatch(client, "notifications", "list"),
+    /1.000 registros/,
+  );
+  await assert.rejects(
+    () => dispatch(client, "client-dashboard", "get"),
+    /1.000 registros/,
+  );
+});
 test("busca de projetos é paginada, ignora acentos e não pesquisa dados privados ou de terceiros", async () => {
   const { db, client, other } = setup();
   for (let index = 0; index < 30; index++)
