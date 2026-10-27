@@ -1,7 +1,7 @@
 /* Variante pública e variante interna do mesmo cabeçalho DEVXIS. */
 .site-icon {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -11,11 +11,11 @@
   vertical-align: middle;
 }
 .site-header.official-site-header {
-  height: 78px;
-  min-height: 78px;
+  height: 76px;
+  min-height: 76px;
   width: 100%;
   padding: 0 clamp(24px, 3.2vw, 60px);
-  gap: 22px;
+  gap: 18px;
   top: 0;
   border: 0;
   border-bottom: 1px solid #e3edff;
@@ -26,63 +26,63 @@
 }
 .site-header.official-site-header .brand {
   font:
-    800 32px/1.1 "Plus Jakarta Sans",
+    800 20px/1.1 "Plus Jakarta Sans",
     sans-serif;
-  letter-spacing: -1.3px;
-  gap: 10px;
+  letter-spacing: -0.5px;
+  gap: 8px;
   white-space: nowrap;
   color: #071832;
   text-decoration: none;
 }
 .site-header.official-site-header .brand img {
-  width: 50px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
 }
 .site-header.official-site-header .brand span span {
   color: #087bff;
 }
 .site-header.official-site-header nav {
-  gap: 30px;
+  gap: 28px;
   margin-left: auto;
   margin-right: 0;
 }
 .site-header.official-site-header nav a {
   font:
-    700 13px "Plus Jakarta Sans",
+    600 14px "Plus Jakarta Sans",
     sans-serif;
   color: #071832;
   white-space: nowrap;
 }
 .site-header.official-site-header .header-cta {
   display: inline-flex;
-  min-height: 50px;
-  border-radius: 14px;
-  padding: 15px 22px;
+  min-height: 36px;
+  border-radius: 999px;
+  padding: 12px 18px;
   background: #087bff;
   border-color: #087bff;
   box-shadow: 0 4px 10px #087bff18;
-  font-size: 14px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .site-header.official-site-header .profile-area {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
   margin-left: 0;
 }
 .site-header.official-site-header .portal-header-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 50px;
+  gap: 8px;
+  min-height: 36px;
   width: auto;
   height: auto;
   min-width: 0;
-  padding: 12px 17px;
+  padding: 8px 12px;
   border: 1px solid #dfe9fc;
-  border-radius: 13px;
+  border-radius: 10px;
   background: #fff;
   box-shadow: 0 3px 10px #07183206;
   color: #071832;
@@ -108,9 +108,9 @@
   color: #087bff;
 }
 .site-header.official-site-header .portal-bell {
-  width: 50px;
-  padding: 12px;
-  border-radius: 16px;
+  width: 36px;
+  padding: 8px;
+  border-radius: 10px;
   color: #087bff;
 }
 .site-header.official-site-header:not(.panel-site-header) .portal-bell {
@@ -132,8 +132,8 @@
 }
 .site-header.official-site-header.panel-site-header {
   width: auto;
-  height: 78px;
-  min-height: 78px;
+  height: 76px;
+  min-height: 76px;
   top: 14px;
   margin: 16px clamp(12px, 2vw, 42px) 0;
   padding: 0 clamp(18px, 1.8vw, 34px);
@@ -147,8 +147,8 @@
   content: "";
   position: absolute;
   left: -9px;
-  top: 17px;
-  bottom: 17px;
+  top: 10px;
+  bottom: 10px;
   border-left: 1px solid #a7bbdc;
 }
 .official-site-header [hidden] {
@@ -164,17 +164,17 @@
   top: auto;
   width: 100%;
   height: auto;
-  min-height: 78px;
+  min-height: 76px;
   margin: 42px 0 12px;
-  padding: 14px 20px;
+  padding: 10px 16px;
   gap: 18px;
 }
 .admin-site-navigation .site-header.official-site-header nav {
-  gap: 22px;
+  gap: 18px;
 }
 .admin-site-navigation .site-header.official-site-header #admin-logout {
   font-size: 12px;
-  padding: 12px 15px;
+  padding: 8px 12px;
 }
 @media (max-width: 1550px) {
   .site-header.official-site-header {
@@ -182,10 +182,10 @@
     padding-inline: 32px;
   }
   .site-header.official-site-header .brand {
-    font-size: 28px;
+    font-size: 20px;
   }
   .site-header.official-site-header .brand img {
-    width: 44px;
+    width: 36px;
   }
   .site-header.official-site-header nav {
     gap: 23px;
@@ -195,7 +195,7 @@
     padding-inline: 17px;
   }
   .site-header.official-site-header .profile-area {
-    gap: 10px;
+    gap: 8px;
   }
   .site-header.official-site-header .portal-header-button {
     padding-inline: 13px;
@@ -271,7 +271,7 @@
   :is(#mobile-menu-close, #admin-site-mobile-menu-close) {
     display: grid;
     place-items: center;
-    width: 32px;
+    width: 30px;
     height: 32px;
     padding: 6px;
     border: 0;
@@ -298,10 +298,10 @@
     display: grid;
     grid-template-columns: 30px 1fr 15px;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-height: 48px;
     color: #071832;
-    font-size: 14px;
+    font-size: 13px;
   }
   .mobile-drawer__links svg,
   .mobile-drawer__cta > svg {
@@ -318,7 +318,7 @@
   .mobile-drawer__cta {
     display: grid;
     grid-template-columns: 30px 1fr 14px;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
     margin-top: 38px;
     padding: 18px 13px;
@@ -358,13 +358,13 @@
 @media (max-width: 850px) {
   .site-header.official-site-header {
     height: auto;
-    min-height: 76px;
-    padding: 14px 24px;
+    min-height: 64px;
+    padding: 10px 18px;
     flex-wrap: wrap;
     gap: 12px;
   }
   .site-header.official-site-header .brand {
-    font-size: 28px;
+    font-size: 20px;
   }
   .site-header.official-site-header.panel-site-header {
     height: auto;
@@ -378,17 +378,17 @@
     display: grid;
     grid-template-columns: 44px repeat(3, minmax(0, 1fr));
     width: 100%;
-    gap: 10px;
+    gap: 8px;
   }
   .site-header.official-site-header .portal-header-button {
-    min-height: 45px;
+    min-height: 36px;
     padding: 10px;
     font-size: 12px;
     white-space: normal;
   }
   .site-header.official-site-header .portal-bell {
-    width: 44px;
-    height: 45px;
+    width: 36px;
+    height: 36px;
     border-radius: 12px;
   }
   .site-header.official-site-header.panel-site-header .portal-panel-exit {
@@ -405,7 +405,7 @@
     display: grid;
     grid-template-columns: 44px repeat(2, minmax(0, 1fr));
     width: 100%;
-    gap: 10px;
+    gap: 8px;
   }
   .admin-site-navigation .site-header.official-site-header {
     margin: 42px 0 12px;
@@ -414,13 +414,13 @@
 @media (max-width: 600px) {
   .site-header.official-site-header {
     padding: 12px 16px;
-    gap: 10px;
+    gap: 8px;
   }
   .site-header.official-site-header .brand {
-    font-size: 25px;
+    font-size: 18px;
   }
   .site-header.official-site-header .brand img {
-    width: 40px;
+    width: 30px;
     height: 34px;
   }
   .site-header.official-site-header.panel-site-header .profile-area {
@@ -429,7 +429,7 @@
   }
   .site-header.official-site-header .portal-header-button,
   .admin-site-navigation .site-header.official-site-header #admin-logout {
-    min-height: 43px;
+    min-height: 36px;
     padding: 8px 7px;
     gap: 5px;
     font-size: 10px;
@@ -458,10 +458,10 @@
     display: block;
   }
   .admin-site-navigation .site-header.official-site-header .brand {
-    font-size: 22px;
+    font-size: 18px;
   }
   .admin-site-navigation .site-header.official-site-header .brand img {
-    width: 32px;
+    width: 30px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
